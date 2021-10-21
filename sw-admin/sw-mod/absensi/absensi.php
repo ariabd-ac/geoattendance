@@ -117,7 +117,7 @@ echo'
                 <div class="form-group">
                   <label>Tipe</label>
                   <select class="form-control type" required>
-                    <option value="excel">EXCEL</option>
+                    <!-- <option value="excel">EXCEL</option> -->
                     <option value="print">PRINT</option>
                   </select>
                 </div>
@@ -214,7 +214,7 @@ echo'
                   </button>
                   <ul class="dropdown-menu" role="menu">
                     <li><a href="#" class="btn-print" data-id="pdf">PDF</a></li>
-                    <li><a href="#" class="btn-print" data-id="excel">EXCEL</a></li>
+                    <!-- <li><a href="#" class="btn-print" data-id="excel">EXCEL</a></li> -->
                     <li><a href="#" class="btn-print" data-id="print">PRINT</a></li>
                   </ul>
             </div>
