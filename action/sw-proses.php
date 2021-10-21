@@ -903,21 +903,6 @@ switch (@$_GET['action']) {
           </div>
       </a>
   </div>
-  <!-- * item -->
-  <div class="col-6 col-md-3">
-      <a href="./absent.php" class="item">
-          <div class="detail">
-              <div class="icon-block text-danger">
-                <ion-icon name="home"></ion-icon>
-              </div>
-              <div>
-                  <strong>WFH</strong>
-                  <p>' . $telat->num_rows . ' hari</p>
-              </div>
-          </div>
-      </a>
-  </div>
-  <!-- * item -->
   ';
 
 
