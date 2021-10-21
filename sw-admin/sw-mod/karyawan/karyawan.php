@@ -38,7 +38,7 @@ if (empty($connection)) {
             <thead>
             <tr>
               <th style="width: 10px">No</th>
-              <th>NIK</th>
+              <th>NIP</th>
               <th>Nama</th>
               <th>Email</th>
               <th>Jabatan</th>
@@ -250,7 +250,7 @@ if (empty($connection)) {
             <form class="form-horizontal validate update-karyawan">
               <div class="box-body">
                 <div class="form-group">
-                  <label class="col-sm-2 control-label">NIK</label>
+                  <label class="col-sm-2 control-label">NIP</label>
                   <div class="col-sm-6">
                     <input type="text" class="form-control" name="employees_code" value="' . $row['employees_code'] . '" required>
                     <input type="hidden"  name="id" value="' . $row['id'] . '" readonly required>
