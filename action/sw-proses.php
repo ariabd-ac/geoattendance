@@ -14,11 +14,11 @@ $expired_cookie = time() + 60 * 60 * 24 * 7;
 switch (@$_GET['action']) {
   case 'login':
     $error = array();
-    if (empty($_POST['email'])) {
-      $error[] = 'Email tidak boleh kosong';
+    if (empty($_POST['NIP'])) {
+      $error[] = 'NIP tidak boleh kosong';
     } else {
-      $email = mysqli_real_escape_string($connection, $_POST['email']);
-      $created_cookies =  md5($email);
+      $NIP = mysqli_real_escape_string($connection, $_POST['NIP']);
+      $created_cookies =  md5($NIP);
     }
 
     if (empty($_POST['password'])) {
@@ -30,7 +30,7 @@ switch (@$_GET['action']) {
     if (empty($error)) {
       $update_user = mysqli_query($connection, "UPDATE employees SET created_login='$time_login',  created_cookies='$created_cookies' WHERE employees_password='$password'");
 
-      $query_login = "SELECT id,employees_email,employees_name,created_cookies FROM employees WHERE employees_email='$email' AND employees_password='$password'";
+      $query_login = "SELECT id,employees_email,employees_name,created_cookies FROM employees WHERE employees_code='$NIP' AND employees_password='$password'";
       $result_login       = $connection->query($query_login);
       $row                = $result_login->fetch_assoc();
 
