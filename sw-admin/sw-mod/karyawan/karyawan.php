@@ -193,7 +193,7 @@ if (empty($connection)) {
                   <label class="col-sm-2 control-label">Foto</label>
                   <div class="col-sm-6">
                     <img width="80" class="preview" src="./sw-assets/img/avatar.jpg"><br><br>
-                    <input type="file" id="imgInp" class="btn btn-default" id="file" name="photo" required="" accept="image/jpeg, image/jpg, image/gif" capture>
+                    <input type="file" id="imgInp" class="btn btn-default" id="file" name="photo" accept="image/jpeg, image/jpg, image/gif" capture>
                   </div>
                 </div>
 
@@ -327,11 +327,13 @@ if (empty($connection)) {
                   <label class="col-sm-2 control-label">Foto</label>
                   <div class="col-sm-6">
                     <div class="upload-media">';
-          if ($row['photo'] == NULL) {
+
+          if ($row['photo'] === NULL || $row['photo'] === '' || count($row['photo']) == 0) {
             echo '<img width="80" class="preview" width="80" src="../sw-assets/img/avatar.jpg">';
           } else {
             echo '<img width="80" class="preview" width="80" src="../sw-content/karyawan/' . $row['photo'] . '">';
           }
+
           echo '
                     </div>
                     <input type="file" id="imgInp" class="btn btn-default" id="file" name="photo" accept="image/jpeg, image/jpg, image/gif" capture>

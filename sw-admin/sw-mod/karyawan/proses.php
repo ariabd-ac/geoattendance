@@ -59,81 +59,88 @@ if (empty($_SESSION['SESSION_USER']) && empty($_SESSION['SESSION_ID'])) {
         $building_id = mysqli_real_escape_string($connection, $_POST['building_id']);
       }
 
+      $photo  = NULL;
 
-      // if (empty($_FILES['photo'])) {
-      //   $error[] = 'tidak boleh kosong';
-      // } else {
-      //   $photo = $_FILES["photo"]["name"];
-      //   $lokasi_file = $_FILES['photo']['tmp_name'];
-      //   $ukuran_file = $_FILES['photo']['size'];
-      // }
-      $photo = $_FILES["photo"]["name"];
-      $lokasi_file = $_FILES['photo']['tmp_name'];
-      $ukuran_file = $_FILES['photo']['size'];
+      if ($_FILES['photo']['name']) {
 
-      $extension = getExtension($photo);
-      $extension = strtolower($extension);
-      $photo = strip_tags(md5($photo));
-      $photo = "" . $date . "" . $photo . "." . $extension . "";
+        $photo = $_FILES["photo"]["name"];
+        $lokasi_file = $_FILES['photo']['tmp_name'];
+        $ukuran_file = $_FILES['photo']['size'];
 
-      if (($extension != "") && ($extension != "") && ($extension != "")) {
-        echo 'Gambar/Foto yang di unggah tidak sesuai dengan format, Berkas harus berformat JPG,JPEG,GIF..!';
-      } else {
-        if ($extension == "jpg" || $extension == "jpeg") {
-          $src = imagecreatefromjpeg($lokasi_file);
-        } else if ($extension == "png") {
-          $src = imagecreatefrompng($lokasi_file);
+        $extension = getExtension($photo);
+        $extension = strtolower($extension);
+        $photo = strip_tags(md5($photo));
+        $photo = "" . $date . "" . $photo . "." . $extension . "";
+
+        if (($extension != "jpg") && ($extension != "jpeg") && ($extension != "gif")) {
+          echo 'Gambar/Foto yang di unggah tidak sesuai dengan format, Berkas harus berformat JPG,JPEG,GIF..!';
         } else {
-          $src = imagecreatefromgif($lokasi_file);
-        }
-        list($width, $height) = getimagesize($lokasi_file);
+          if ($extension == "jpg" || $extension == "jpeg") {
+            $src = imagecreatefromjpeg($lokasi_file);
+          } else if ($extension == "png") {
+            $src = imagecreatefrompng($lokasi_file);
+          } else {
+            $src = imagecreatefromgif($lokasi_file);
+          }
+          list($width, $height) = getimagesize($lokasi_file);
 
-        $width_size = 400;
-        $k = $width / $width_size;
-        // menentukan width yang baru
-        $newwidth = $width / $k;
-        // menentukan height yang baru
-        $newheight = $height / $k;
-        $tmp = imagecreatetruecolor($newwidth, $newheight);
-        //imagefill ( $thumb_p, 0, 0, $bg );
-        imagecopyresampled($tmp, $src, 0, 0, 0, 0, $newwidth, $newheight, $width, $height);
+          $width_size = 400;
+          $k = $width / $width_size;
+          // menentukan width yang baru
+          $newwidth = $width / $k;
+          // menentukan height yang baru
+          $newheight = $height / $k;
+          $tmp = imagecreatetruecolor($newwidth, $newheight);
+          //imagefill ( $thumb_p, 0, 0, $bg );
+          imagecopyresampled($tmp, $src, 0, 0, 0, 0, $newwidth, $newheight, $width, $height);
 
-        if (empty($error)) {
+
           if ($ukuran_file <= $max_size) {
             $directory = '../../../sw-content/karyawan/' . $photo . '';
-            $add = "INSERT INTO employees (employees_code,
-              employees_email,
-              employees_password,
-              employees_name,
-              position_id,
-              shift_id,
-              building_id,
-              photo,
-              created_login,
-              created_cookies) values('$employees_code',
-              '$employees_email',
-              '$employees_password',
-              '$employees_name',
-              '$position_id',
-              '$shift_id',
-              '$building_id',
-              '$photo',
-              '$date $time',
-              '-')";
-            if ($connection->query($add) === false) {
-              die($connection->error . __LINE__);
-              echo 'Data tidak berhasil disimpan!';
-            } else {
-              echo 'success';
-              imagejpeg($tmp, $directory, 90);
-            }
+
+            imagejpeg($tmp, $directory, 90);
           } else {
             echo 'Gambar yang di unggah terlalu besar Maksimal Size 2MB..!';
           }
-        } else {
-          echo 'Bidang inputan masih ada yang kosong..!';
         }
       }
+      if (empty($error)) {
+        $add = "INSERT INTO employees (employees_code,
+            employees_email,
+            employees_password,
+            employees_name,
+            position_id,
+            shift_id,
+            building_id,
+            photo,
+            created_login,
+            created_cookies) values('$employees_code',
+            '$employees_email',
+            '$employees_password',
+            '$employees_name',
+            '$position_id',
+            '$shift_id',
+            '$building_id',
+            '$photo',
+            '$date $time',
+            '-')";
+        if ($connection->query($add) === false) {
+          die($connection->error . __LINE__);
+          echo 'Data tidak berhasil disimpan!';
+        } else {
+          echo 'success';
+        }
+      } else {
+        echo 'Bidang inputan masih ada yang kosong..!';
+      }
+
+
+
+
+
+
+
+
 
       break;
 
