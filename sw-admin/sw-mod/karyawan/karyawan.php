@@ -1,13 +1,13 @@
 <?php
-if(empty($connection)){
+if (empty($connection)) {
   header('location:../../');
 } else {
   include_once 'sw-mod/sw-panel.php';
-echo'
+  echo '
   <div class="content-wrapper">';
-switch(@$_GET['op']){ 
+  switch (@$_GET['op']) {
     default:
-echo'
+      echo '
 <section class="content-header">
   <h1>Data<small> Karyawan</small></h1>
     <ol class="breadcrumb">
@@ -15,7 +15,7 @@ echo'
       <li class="active">Data Karyawan</li>
     </ol>
 </section>';
-echo'
+      echo '
 <section class="content">
   <div class="row">
     <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
@@ -23,12 +23,13 @@ echo'
         <div class="box-header with-border">
           <h3 class="box-title"><b>Data Karyawan</b></h3>
           <div class="box-tools pull-right">';
-          if($level_user==1){
-            echo'
-            <a href="'.$mod.'&op=add" class="btn btn-success btn-flat"><i class="fa fa-plus"></i> Tambah Baru</a>';}
-          else{
-            echo'<button type="button" class="btn btn-success btn-flat access-failed"><i class="fa fa-plus"></i> Tambah Baru</button>';
-          }echo'
+      if ($level_user == 1) {
+        echo '
+            <a href="' . $mod . '&op=add" class="btn btn-success btn-flat"><i class="fa fa-plus"></i> Tambah Baru</a>';
+      } else {
+        echo '<button type="button" class="btn btn-success btn-flat access-failed"><i class="fa fa-plus"></i> Tambah Baru</button>';
+      }
+      echo '
           </div>
         </div>
     <div class="box-body">
@@ -47,38 +48,40 @@ echo'
             </tr>
             </thead>
             <tbody>';
-            $query="SELECT employees.*,position.position_name,shift.shift_name,building.name  FROM employees,position,shift,building WHERE employees.position_id=position.position_id AND employees.shift_id=shift.shift_id AND employees.building_id=building.building_id  order by employees.id DESC";
-            $result = $connection->query($query);
-            if($result->num_rows > 0){
-            $no=0;
-           while ($row= $result->fetch_assoc()) {
-              $no++;
-              echo'
+      $query = "SELECT employees.*,position.position_name,shift.shift_name,building.name  FROM employees,position,shift,building WHERE employees.position_id=position.position_id AND employees.shift_id=shift.shift_id AND employees.building_id=building.building_id  order by employees.id DESC";
+      $result = $connection->query($query);
+      if ($result->num_rows > 0) {
+        $no = 0;
+        while ($row = $result->fetch_assoc()) {
+          $no++;
+          echo '
               <tr>
-                <td class="text-center">'.$no.'</td>
-                <td>'.$row['employees_code'].'</td>
-                <td>'.$row['employees_name'].'</td>
-                <td>'.$row['employees_email'].'</td>
-                <td>'.$row['position_name'].'</td>
-                <td>'.$row['shift_name'].'</td>
-                <td>'.$row['name'].'</td>
+                <td class="text-center">' . $no . '</td>
+                <td>' . $row['employees_code'] . '</td>
+                <td>' . $row['employees_name'] . '</td>
+                <td>' . $row['employees_email'] . '</td>
+                <td>' . $row['position_name'] . '</td>
+                <td>' . $row['shift_name'] . '</td>
+                <td>' . $row['name'] . '</td>
                 <td class="text-right">
                   <div class="btn-group">';
-                  if($level_user==1){
-                    echo'
-                    <a href="./'.$mod.'&op=edit&id='.epm_encode($row['id']).'" class="btn btn-warning btn-xs enable-tooltip" title="Edit"><i class="fa fa-pencil-square-o"></i> Ubah</a>
-                    <buton data-id="'.epm_encode($row['id']).'" class="btn btn-xs btn-danger delete" title="Hapus"><i class="fa fa-trash-o"></i> Hapus</button>';}
-                  else{
-                  echo'
+          if ($level_user == 1) {
+            echo '
+                    <a href="./' . $mod . '&op=edit&id=' . epm_encode($row['id']) . '" class="btn btn-warning btn-xs enable-tooltip" title="Edit"><i class="fa fa-pencil-square-o"></i> Ubah</a>
+                    <buton data-id="' . epm_encode($row['id']) . '" class="btn btn-xs btn-danger delete" title="Hapus"><i class="fa fa-trash-o"></i> Hapus</button>';
+          } else {
+            echo '
                     <button type="button" class="btn btn-warning btn-xs access-failed enable-tooltip" title="Edit"><i class="fa fa-pencil-square-o"></i> Ubah</button>
                     <buton type="button" class="btn btn-xs btn-danger access-failed" title="Hapus"><i class="fa fa-trash-o"></i> Hapus</button>';
-                  }
-                  echo'
+          }
+          echo '
                   </div>
 
                 </td>
-              </tr>';}}
-            echo'
+              </tr>';
+        }
+      }
+      echo '
             </tbody>
             </table>
         </div>
@@ -86,11 +89,11 @@ echo'
     </div>
   </div> 
 </section>';
-break;
+      break;
 
 
-case 'add':
-echo'
+    case 'add':
+      echo '
 <section class="content-header">
   <h1>Tambah Data<small> Karyawan</small></h1>
     <ol class="breadcrumb">
@@ -99,7 +102,7 @@ echo'
       <li class="active">Tambah Karyawan</li>
     </ol>
 </section>';
-echo'
+      echo '
 <section class="content">
   <div class="row">
     <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
@@ -145,11 +148,12 @@ echo'
                   <div class="col-sm-6">
                    <select class="form-control" name="position_id" required="">
                       <option value="">- Pilih -</option>';
-                      $query="SELECT * from position order by position_name ASC";
-                      $result = $connection->query($query);
-                      while($row = $result->fetch_assoc()) { 
-                      echo'<option value="'.$row['position_id'].'">'.$row['position_name'].'</option>';
-                      }echo'
+      $query = "SELECT * from position order by position_name ASC";
+      $result = $connection->query($query);
+      while ($row = $result->fetch_assoc()) {
+        echo '<option value="' . $row['position_id'] . '">' . $row['position_name'] . '</option>';
+      }
+      echo '
                   </select>
                   </div>
                 </div>
@@ -159,11 +163,12 @@ echo'
                   <div class="col-sm-6">
                    <select class="form-control" name="shift_id" required="">
                       <option value="">- Pilih -</option>';
-                      $query="SELECT shift_id,shift_name from shift order by shift_name ASC";
-                      $result = $connection->query($query);
-                      while($row = $result->fetch_assoc()) { 
-                      echo'<option value="'.$row['shift_id'].'">'.$row['shift_name'].'</option>';
-                      }echo'
+      $query = "SELECT shift_id,shift_name from shift order by shift_name ASC";
+      $result = $connection->query($query);
+      while ($row = $result->fetch_assoc()) {
+        echo '<option value="' . $row['shift_id'] . '">' . $row['shift_name'] . '</option>';
+      }
+      echo '
                   </select>
                   </div>
                 </div>
@@ -174,11 +179,12 @@ echo'
                   <div class="col-sm-6">
                    <select class="form-control" name="building_id" id="building" required="">
                       <option value="">- Pilih -</option>';
-                      $query="SELECT building_id,name,address from building order by name ASC";
-                      $result = $connection->query($query);
-                      while($row = $result->fetch_assoc()) { 
-                      echo'<option value="'.$row['building_id'].'">'.$row['address'].'</option>';
-                      }echo'
+      $query = "SELECT building_id,name,address from building order by name ASC";
+      $result = $connection->query($query);
+      while ($row = $result->fetch_assoc()) {
+        echo '<option value="' . $row['building_id'] . '">' . $row['address'] . '</option>';
+      }
+      echo '
                   </select>
                   </div>
                 </div>
@@ -196,7 +202,7 @@ echo'
               <div class="box-footer">
                 <div class="col-sm-2"></div>
                 <button type="submit" class="btn btn-primary"><i class="fa fa-check"></i> Simpan</button>
-                <a class="btn btn-danger" href="./'.$mod.'"><i class="fa fa-remove"></i> Batal</a>
+                <a class="btn btn-danger" href="./' . $mod . '"><i class="fa fa-remove"></i> Batal</a>
               </div>
               <!-- /.box-footer -->
             </form>
@@ -205,10 +211,10 @@ echo'
     </div>
   </div> 
 </section>';
-break;
+      break;
 
-case 'edit':
-echo'
+    case 'edit':
+      echo '
 <section class="content-header">
   <h1>Edit Data<small> Karyawan</small></h1>
     <ol class="breadcrumb">
@@ -230,13 +236,13 @@ echo'
         </div>
 
       <div class="box-body">';
-      if(!empty($_GET['id'])){
-      $id     =  mysqli_real_escape_string($connection,epm_decode($_GET['id'])); 
-      $query  ="SELECT * from employees WHERE id='$id'";
-      $result = $connection->query($query);
-      if($result->num_rows > 0){
-      $row  = $result->fetch_assoc();
-      echo'
+      if (!empty($_GET['id'])) {
+        $id     =  mysqli_real_escape_string($connection, epm_decode($_GET['id']));
+        $query  = "SELECT * from employees WHERE id='$id'";
+        $result = $connection->query($query);
+        if ($result->num_rows > 0) {
+          $row  = $result->fetch_assoc();
+          echo '
       <div class="nav-tabs-custom">
         <div class="tab-content">
           <div class="tab-pane active" id="tab_1">
@@ -246,15 +252,15 @@ echo'
                 <div class="form-group">
                   <label class="col-sm-2 control-label">NIK</label>
                   <div class="col-sm-6">
-                    <input type="text" class="form-control" name="employees_code" value="'.$row['employees_code'].'" required>
-                    <input type="hidden"  name="id" value="'.$row['id'].'" readonly required>
+                    <input type="text" class="form-control" name="employees_code" value="' . $row['employees_code'] . '" required>
+                    <input type="hidden"  name="id" value="' . $row['id'] . '" readonly required>
                   </div>
                 </div>
 
                 <div class="form-group">
                   <label class="col-sm-2 control-label">Nama</label>
                   <div class="col-sm-6">
-                    <input type="text" class="form-control" name="employees_name" value="'.$row['employees_name'].'" required>
+                    <input type="text" class="form-control" name="employees_name" value="' . $row['employees_name'] . '" required>
                   </div>
                 </div>
 
@@ -264,15 +270,16 @@ echo'
                   <div class="col-sm-6">
                    <select class="form-control" name="position_id" required="">
                       <option value="">- Pilih -</option>';
-                      $query="SELECT * from position order by position_name ASC";
-                      $result = $connection->query($query);
-                      while($rowa = $result->fetch_assoc()) { 
-                      if($rowa['position_id'] == $row['position_id']){
-                        echo'<option value="'.$rowa['position_id'].'" selected>'.$rowa['position_name'].'</option>';
-                      }else{
-                        echo'<option value="'.$rowa['position_id'].'">'.$rowa['position_name'].'</option>';
-                      }
-                      }echo'
+          $query = "SELECT * from position order by position_name ASC";
+          $result = $connection->query($query);
+          while ($rowa = $result->fetch_assoc()) {
+            if ($rowa['position_id'] == $row['position_id']) {
+              echo '<option value="' . $rowa['position_id'] . '" selected>' . $rowa['position_name'] . '</option>';
+            } else {
+              echo '<option value="' . $rowa['position_id'] . '">' . $rowa['position_name'] . '</option>';
+            }
+          }
+          echo '
                   </select>
                   </div>
                 </div>
@@ -282,15 +289,16 @@ echo'
                   <div class="col-sm-6">
                    <select class="form-control" name="shift_id" required="">
                       <option value="">- Pilih -</option>';
-                      $query="SELECT shift_id,shift_name from shift order by shift_name ASC";
-                      $result = $connection->query($query);
-                      while($rowa = $result->fetch_assoc()) {
-                      if($rowa['shift_id'] == $row['shift_id']){ 
-                        echo'<option value="'.$rowa['shift_id'].'" selected>'.$rowa['shift_name'].'</option>';
-                      }else{
-                        echo'<option value="'.$rowa['shift_id'].'">'.$rowa['shift_name'].'</option>';
-                      }
-                      }echo'
+          $query = "SELECT shift_id,shift_name from shift order by shift_name ASC";
+          $result = $connection->query($query);
+          while ($rowa = $result->fetch_assoc()) {
+            if ($rowa['shift_id'] == $row['shift_id']) {
+              echo '<option value="' . $rowa['shift_id'] . '" selected>' . $rowa['shift_name'] . '</option>';
+            } else {
+              echo '<option value="' . $rowa['shift_id'] . '">' . $rowa['shift_name'] . '</option>';
+            }
+          }
+          echo '
                   </select>
                   </div>
                 </div>
@@ -301,15 +309,16 @@ echo'
                   <div class="col-sm-6">
                    <select class="form-control" name="building_id" id="building" required="">
                       <option value="">- Pilih -</option>';
-                      $query="SELECT building_id,name,address from building order by name ASC";
-                      $result = $connection->query($query);
-                      while($rowa = $result->fetch_assoc()) { 
-                      if($rowa['building_id'] == $row['building_id']){ 
-                        echo'<option value="'.$rowa['building_id'].'" selected>'.$rowa['address'].'</option>';
-                      }else{
-                        echo'<option value="'.$rowa['building_id'].'">'.$rowa['address'].'</option>';
-                      }
-                      }echo'
+          $query = "SELECT building_id,name,address from building order by name ASC";
+          $result = $connection->query($query);
+          while ($rowa = $result->fetch_assoc()) {
+            if ($rowa['building_id'] == $row['building_id']) {
+              echo '<option value="' . $rowa['building_id'] . '" selected>' . $rowa['address'] . '</option>';
+            } else {
+              echo '<option value="' . $rowa['building_id'] . '">' . $rowa['address'] . '</option>';
+            }
+          }
+          echo '
                   </select>
                   </div>
                 </div>
@@ -318,11 +327,12 @@ echo'
                   <label class="col-sm-2 control-label">Foto</label>
                   <div class="col-sm-6">
                     <div class="upload-media">';
-                     if($row['photo'] == NULL){
-                      echo'<img width="80" class="preview" width="80" src="../sw-assets/img/avatar.jpg">';}
-                    else{
-                      echo'<img width="80" class="preview" width="80" src="../sw-content/karyawan/'.$row['photo'].'">';
-                    }echo'
+          if ($row['photo'] == NULL) {
+            echo '<img width="80" class="preview" width="80" src="../sw-assets/img/avatar.jpg">';
+          } else {
+            echo '<img width="80" class="preview" width="80" src="../sw-content/karyawan/' . $row['photo'] . '">';
+          }
+          echo '
                     </div>
                     <input type="file" id="imgInp" class="btn btn-default" id="file" name="photo" accept="image/jpeg, image/jpg, image/gif" capture>
                     <small>Kosongan jika tidak ingin mengubah</small>
@@ -334,7 +344,7 @@ echo'
               <div class="box-footer">
                 <div class="col-sm-2"></div>
                 <button type="submit" class="btn btn-primary"><i class="fa fa-check"></i> Simpan</button>
-                <a class="btn btn-danger" href="./'.$mod.'"><i class="fa fa-remove"></i> Batal</a>
+                <a class="btn btn-danger" href="./' . $mod . '"><i class="fa fa-remove"></i> Batal</a>
               </div>
               <!-- /.box-footer -->
             </form>
@@ -347,8 +357,8 @@ echo'
                 <div class="form-group">
                   <label class="col-sm-2 control-label">Email</label>
                   <div class="col-sm-6">
-                    <input type="text" class="form-control" name="employees_email" value="'.$row['employees_email'].'" readonly required>
-                    <input type="hidden"  name="id" value="'.$row['id'].'" readonly required>
+                    <input type="text" class="form-control" name="employees_email" value="' . $row['employees_email'] . '" readonly required>
+                    <input type="hidden"  name="id" value="' . $row['id'] . '" readonly required>
                   </div>
                 </div>
 
@@ -365,7 +375,7 @@ echo'
               <div class="box-footer">
                 <div class="col-sm-2"></div>
                 <button type="submit" class="btn btn-primary"><i class="fa fa-check"></i> Simpan</button>
-                <a class="btn btn-danger" href="./'.$mod.'"><i class="fa fa-remove"></i> Batal</a>
+                <a class="btn btn-danger" href="./' . $mod . '"><i class="fa fa-remove"></i> Batal</a>
               </div>
               <!-- /.box-footer -->
             </form>
@@ -373,8 +383,8 @@ echo'
         <!-- /.tab-content -->
       </div>
       <!-- nav-tabs-custom -->';
-      }else{
-         echo'<section class="content">
+        } else {
+          echo '<section class="content">
             <div class="error-page">
               <h2 class="headline text-yellow"> 404</h2>
               <div class="error-content">
@@ -386,15 +396,16 @@ echo'
               </div>
             </div>
           </section>';
-      }}
-        echo'
+        }
+      }
+      echo '
       </div>
     </div>
   </div> 
 </section>';
 
-break;
-}?>
+      break;
+  } ?>
 
-</div>
-<?php }?>
+  </div>
+<?php } ?>

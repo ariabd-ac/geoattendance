@@ -4,7 +4,7 @@ $pacth_url	='http://'.$_SERVER["HTTP_HOST"].$_SERVER["REQUEST_URI"].'';
 // -------------- Koneksi Database ------------
 $DB_HOST 	= 'localhost';
 $DB_USER 	= 'root'; // User Database
-$DB_PASSWD  = '12345'; // Password Database
+$DB_PASSWD  = ''; // Password Database
 $DB_NAME 	= 'absensi_v3'; // Nama database
 // -------------- Koneksi Database ------------
 @define("DB_HOST", $DB_HOST);
@@ -41,4 +41,4 @@ if (!function_exists('base_url')) {
 			return $base_url;
 		}
 }
-$base_url = base_url();?>
+$base_url = base_url();
