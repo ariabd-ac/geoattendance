@@ -38,14 +38,14 @@ if(!isset($_COOKIE['COOKIES_MEMBER'])){
 
                 <div class="form-links mt-2">
                     <div>
-                        <a href="registrasi">Mendaftar</a>
+                        <a href="registrasi" class="d-none">Mendaftar</a>
                     </div>
                     <div><a href="forgot" class="text-muted">Lupa Password?</a></div>
                 </div>
 
                 <div class="form-button-group  transparent">
                    <button type="submit" class="btn btn-primary btn-block"><ion-icon name="log-in-outline"></ion-icon> Masuk</button>
-                   <a href="oauth/google" class="btn btn-danger btn-block"><ion-icon name="logo-google"></ion-icon> Masuk Dengan Google</a>
+                   <a href="oauth/google" class="btn btn-danger btn-block d-none"><ion-icon name="logo-google"></ion-icon> Masuk Dengan Google</a>
                 </div>
 
             </form>
@@ -226,3 +226,4 @@ if(!isset($_COOKIE['COOKIES_MEMBER'])){
     }
   include_once 'sw-mod/sw-footer.php';
 }
+
