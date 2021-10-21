@@ -84,7 +84,7 @@ if(!isset($_COOKIE['COOKIES_MEMBER']) && !isset($_COOKIE['COOKIES_COOKIES'])){
                                     <label class="label">Pilih Tipe</label>
                                     <select class="form-control custom-select type" name="type" required>
                                        <option value="pdf">PDF</option>
-                                       <option value="excel">EXCEL</option>
+                                       <!-- <option value="excel">EXCEL</option> -->
                                     </select>
                                 </div>
                             </div>
