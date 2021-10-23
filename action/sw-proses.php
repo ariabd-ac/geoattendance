@@ -55,7 +55,7 @@ switch (@$_GET['action']) {
         setcookie('COOKIES_COOKIES', $COOKIES_COOKIES, $expired_cookie, '/');
         echo 'success';
       } else {
-        echo 'Email dan password yang Anda masukkan salah!';
+        echo 'NIP dan password yang Anda masukkan salah!';
       }
     } else {
       echo 'Bidang inputan tidak boleh ada yang kosong!';

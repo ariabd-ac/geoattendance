@@ -40,7 +40,7 @@ if ($mod == '') {
                     <div>
                         <a href="registrasi" class="d-none">Mendaftar</a>
                     </div>
-                    <div><a href="forgot" class="text-muted">Lupa Password?</a></div>
+                    <!--  <div><a href="forgot" class="text-muted">Lupa Password?</a></div> -->
                 </div>
 
                 <div class="form-button-group  transparent">
@@ -274,4 +274,3 @@ if ($mod == '') {
     }
     include_once 'sw-mod/sw-footer.php';
 }
-

@@ -73,9 +73,10 @@ if (!empty($_SESSION['SESSION_USER']) && !empty($_SESSION['SESSION_ID'])) {
 
 
   <footer class="text-muted text-center">
-    <small></span><span id="credits"><a class="credits d-block" href="https://s-widodo.com"></a></span>
-      <small>Pemalicomal 2021</small>
-    </small>
+    <small></span>
+      <span id="credits">
+        <a class="credits" href="https://s-widodo.com" target="_blank"></a>Absensi online - </span>
+      <em>Design ICT Center</em></small>
   </footer>
 
 
@@ -84,9 +85,6 @@ if (!empty($_SESSION['SESSION_USER']) && !empty($_SESSION['SESSION_ID'])) {
   <script src="../sw-assets/js/adminlte.js"></script>
   <script src="../sw-assets/js/demo.js"></script>
   <script src="./jquery-login.js"></script>
-  <script type="text/javascript">
-    console.log("%cThis is a red text", "color:red");
-  </script>
   </body>
 
   </html>
