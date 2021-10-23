@@ -23,7 +23,7 @@
     ' . convert(memory_get_usage()) . '
   </div>
    &copy; 2021 - ' . DATE('Y') . ' ' . $site_name . ' | Design <span id="credits"><a class="credits" href="https://s-widodo.com" target="_blank" id="credits"></a>ICT Center</span>
-</footer>
+  </footer>
 </div>
 <!-- wrapper -->
 <script src="./sw-assets/js/jquery-2.2.3.min.js"></script>

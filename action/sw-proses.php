@@ -866,7 +866,7 @@ switch (@$_GET['action']) {
                   <ion-icon name="person"></ion-icon>
               </div>
               <div>
-                  <strong>DL</strong>
+                  <strong>Izin</strong>
                   <p>' . $izin->num_rows . ' Hari</p>
               </div>
           </div>
