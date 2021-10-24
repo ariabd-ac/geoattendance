@@ -1,4 +1,36 @@
 <?php session_start(); error_reporting(0);
+
+// function calculate distance
+function getDistanceBetweenPoints($lat1, $lon1, $lat2, $lon2) {
+  $theta = $lon1 - $lon2;
+  $miles = (sin(deg2rad($lat1)) * sin(deg2rad($lat2))) + (cos(deg2rad($lat1)) * cos(deg2rad($lat2)) * cos(deg2rad($theta)));
+  $miles = acos($miles);
+  $miles = rad2deg($miles);
+  $miles = $miles * 60 * 1.1515;
+  $feet = $miles * 5280;
+  $yards = $feet / 3;
+  $kilometers = $miles * 1.609344;
+  $meters = $kilometers * 1000;
+  return compact('miles','feet','yards','kilometers','meters'); 
+}
+
+function rad($x){ return $x * M_PI / 180; }
+function distHaversine($coord_a, $coord_b){
+    # jarak kilometer dimensi (mean radius) bumi
+    $R = 6371;
+    $coord_a = explode(",",$coord_a);
+    $coord_b = explode(",",$coord_b);
+    $dLat = rad(($coord_b[0]) - ($coord_a[0]));
+    $dLong = rad($coord_b[1] - $coord_a[1]);
+    $a = sin($dLat/2) * sin($dLat/2) + cos(rad($coord_a[0])) * cos(rad($coord_b[0])) * sin($dLong/2) * sin($dLong/2);
+    $c = 2 * atan2(sqrt($a), sqrt(1-$a));
+    $d = $R * $c;
+    # hasil akhir dalam satuan kilometer
+    return number_format($d, 0, '.', ',');
+}
+// end function calculate distance
+
+
 if(empty($_SESSION['SESSION_USER']) && empty($_SESSION['SESSION_ID'])){
     header('location:../../login/');
  exit;}
@@ -113,6 +145,8 @@ echo'
           $status_time_in ='<label class="label label-danger">'.$row_absen['status'].'</label>';
         }
 
+        
+
         if($row_absen['time_out'] > $shift_time_out){
           $selisih_out ='';
         }else{
@@ -120,6 +154,23 @@ echo'
         }
         list($latitude,  $longitude) = explode(',', $row_absen['latitude_longtitude_in']);
         list($latitude_out,  $longitude_out) = explode(',', $row_absen['latitude_longtitude_out']);
+
+        // calculating a distance
+       
+
+        $pointOffice = array("lat" => -6.9956675, "long" => 109.1257462);
+        // -6.9952841,109.1105971 // kantor bupati tegal
+        // -6.9956675,109.1257462
+        
+        
+        $distance_in  = getDistanceBetweenPoints($pointOffice['lat'], $pointOffice['long'], $latitude, $longitude);
+        $distance_out = getDistanceBetweenPoints($pointOffice['lat'], $pointOffice['long'], $latitude_out, $longitude_out);
+
+        $distance_in2=distHaversine($row_absen['latitude_longtitude_in'], -6.9956675,109.1257462);
+        $distance_out2=distHaversine($row_absen['latitude_longtitude_out'], -6.9956675,109.1257462);
+
+        
+        // calculating a distance
         echo'
         <tr style="background:'.$background.';color:'.$warna.'">
           <td class="text-center">'.$d.'</td>
@@ -133,7 +184,7 @@ echo'
             }
           echo'
           </td>
-          <td class="text-center">'.$row_absen['time_in'].' '.$status_time_in.'</td>
+          <td class="text-center">'.$row_absen['time_in'].' '.$status_time_in.'-'.$distance_in['kilometers'].' | '.$distance_in2.'</td>
           <td class="text-center">'.$row_absen['selisih'].'</td>
           <td class="text-center picture">';
               if($row_absen['picture_out'] ==NULL){
@@ -142,7 +193,7 @@ echo'
                 echo'<a class="image-link" href="'.$site_url.'/sw-content/absent/'.$row_absen['picture_out'].'">
                       <img src="../timthumb?src='.$site_url.'/sw-content/absent/'.$row_absen['picture_out'].'&h=40&w=40"></a>';}
               echo'</td>
-          <td class="text-center">'.$row_absen['time_out'].'</td>
+          <td class="text-center">'.$row_absen['time_out'].'-'.$distance_out['kilometers'].' | '.$distance_out2.'</td>
           <td class="text-center">'.$selisih_out.'</td>
           <td>'.$status_hadir.'<br>'.$row_absen['information'].'</td>
 
