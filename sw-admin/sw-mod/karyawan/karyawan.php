@@ -116,7 +116,7 @@ if (empty($connection)) {
               <div class="box-body">
 
                 <div class="form-group">
-                  <label class="col-sm-2 control-label">NIK</label>
+                  <label class="col-sm-2 control-label">NIP</label>
                   <div class="col-sm-6">
                     <input type="text" class="form-control" name="employees_code" required>
                   </div>

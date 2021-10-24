@@ -1,20 +1,20 @@
-<?php 
-if ($mod ==''){
+<?php
+if ($mod == '') {
     header('location:../404');
-    echo'kosong';
-}else{
+    echo 'kosong';
+} else {
     include_once 'sw-mod/sw-header.php';
-if(!isset($_COOKIE['COOKIES_MEMBER'])){
+    if (!isset($_COOKIE['COOKIES_MEMBER'])) {
 
-$query = mysqli_query($connection, "SELECT max( employees_code) as kodeTerbesar FROM employees");
-$data = mysqli_fetch_array($query);
-$kode_karyawan = $data['kodeTerbesar'];
-$urutan = (int) substr($kode_karyawan, 3, 3);
-$urutan++;
-$huruf = "OM";
-$kode_karyawan = $huruf . sprintf("%03s", $urutan);
+        $query = mysqli_query($connection, "SELECT max( employees_code) as kodeTerbesar FROM employees");
+        $data = mysqli_fetch_array($query);
+        $kode_karyawan = $data['kodeTerbesar'];
+        $urutan = (int) substr($kode_karyawan, 3, 3);
+        $urutan++;
+        $huruf = "OM";
+        $kode_karyawan = $huruf . sprintf("%03s", $urutan);
 
- echo'
+        echo '
  
  <!-- App Capsule -->
     <div id="appCapsule">
@@ -51,7 +51,7 @@ $kode_karyawan = $huruf . sprintf("%03s", $urutan);
                     <div>
                         <a href="registrasi">Mendaftar</a>
                     </div>
-                    <div><a href="forgot" class="text-muted">Lupa Password?</a></div>
+                    // <div><a href="forgot" class="text-muted">Lupa Password?</a></div>
                 </div>
 
                 <div class="form-button-group transparent">
@@ -63,10 +63,10 @@ $kode_karyawan = $huruf . sprintf("%03s", $urutan);
         </div>
 
     </div>
-    <!-- * App Capsule -->';}
-  else{
-    header('location:./');
-  }
+    <!-- * App Capsule -->';
+    } else {
+        header('location:./');
+    }
 
-  include_once 'sw-mod/sw-footer.php';
-} ?>
+    include_once 'sw-mod/sw-footer.php';
+}

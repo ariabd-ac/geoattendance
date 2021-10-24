@@ -47,7 +47,7 @@ if(!isset($_COOKIE['COOKIES_MEMBER']) && !isset($_COOKIE['COOKIES_COOKIES'])){
         </div>
         <div class="col-sm-4 col-md-4 justify-content-between">
            <button type="button" class="btn btn-danger mt-1 btn-sortir"><ion-icon name="checkmark-outline"></ion-icon>Tampilkan</button>
-           <button type="button" class="btn btn-warning mt-1" data-toggle="modal" data-target="#modal-print"><ion-icon name="print-outline"></ion-icon> Cetak</button>
+           <!--  <button type="button" class="btn btn-warning mt-1" data-toggle="modal" data-target="#modal-print"><ion-icon name="print-outline"></ion-icon> Cetak</button>  -->
            <button type="button" class="btn btn-success mt-1 btn-clear"><ion-icon name="repeat-outline"></ion-icon> Clear</button>
         </div>
 
@@ -174,4 +174,4 @@ if(!isset($_COOKIE['COOKIES_MEMBER']) && !isset($_COOKIE['COOKIES_COOKIES'])){
 
   }
   include_once 'sw-mod/sw-footer.php';
-} ?>
+}
