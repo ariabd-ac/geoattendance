@@ -130,8 +130,8 @@ if ($mod == '') {
                     <form id="update-password">
                         <div class="form-group boxed">
                             <div class="input-wrapper">
-                                <label class="label" for="text4">Kode Pegawai</label>
-                                <input type="email" class="form-control" name="employees_email" value="' . $row_user['employees_email'] . '" style="background:#eeeeee" readonly>
+                                <label class="label" for="text4">NIP</label>
+                                <input type="email" class="form-control" name="employees_email" value="' . $row_user['employees_code'] . '" style="background:#eeeeee" readonly>
                                 <i class="clear-input">
                                     <ion-icon name="close-circle"></ion-icon>
                                 </i>
