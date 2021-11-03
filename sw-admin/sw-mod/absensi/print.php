@@ -60,7 +60,7 @@ if (empty($_SESSION['SESSION_USER']) && empty($_SESSION['SESSION_ID'])) {
     <section class="container_box">
       <div class="row">';
           if (isset($_GET['from']) or isset($_GET['to'])) {
-            echo '<img src="../../../sw-content/kop.PNG">';
+            // echo '<img src="../../../sw-content/kop.PNG">';
             echo '<h3 class="text-center">LAPORAN DETAIL HARIAN<br>PERIODE WAKTU ' . tanggal_indo($_GET['from']) . ' - ' . $_GET['to'] . '</h3>';
           } else {
             echo '<h3 class="text-center">LAPORAN DETAIL BULAN<br>' . tanggal_indo($month) . ' - ' . $year . '</h3>';

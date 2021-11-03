@@ -722,10 +722,7 @@ switch (@$_GET['action']) {
 
 
     if (empty($error)) {
-      $query = "SELECT cuty_id from cuty where MONTH(cuty_start) ='$month'";
-      $result = $connection->query($query) or die($connection->error . __LINE__);
-      if (!$result->num_rows > 0) {
-        $add = "INSERT INTO cuty (employees_id,
+      $add = "INSERT INTO cuty (employees_id,
               cuty_start,
               cuty_end,
               date_work,
@@ -738,14 +735,11 @@ switch (@$_GET['action']) {
               '$cuty_total',
               '$cuty_description',
               '3')";
-        if ($connection->query($add) === false) {
-          die($connection->error . __LINE__);
-          echo 'Data tidak berhasil disimpan!';
-        } else {
-          echo 'success';
-        }
+      if ($connection->query($add) === false) {
+        die($connection->error . __LINE__);
+        echo 'Data tidak berhasil disimpan!';
       } else {
-        echo 'Sepertinya "' . $row_user['employees_name'] . '" sudah mengajukan cuti di BULAN ini!';
+        echo 'success';
       }
     } else {
       echo 'Bidang inputan masih ada yang kosong..!';
