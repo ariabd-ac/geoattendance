@@ -151,6 +151,14 @@ if(!isset($_COOKIE['COOKIES_MEMBER']) && !isset($_COOKIE['COOKIES_COOKIES'])){
                                 </div>
 
                                 <div class="form-group basic">
+                                    <label class="label">File</label>
+                                    <div class="input-wrapper">
+                                        <input type="file" id="file_upload" rows="2" class="form-control" name="file_upload" placeholder="File"></textarea>
+                                    </div>
+                                    
+                                </div>
+
+                                <div class="form-group basic">
                                     <label class="label">Keterangan</label>
                                     <div class="input-wrapper">
                                     <textarea id="information" rows="2" class="form-control" name="information" placeholder="Keterangan"></textarea>

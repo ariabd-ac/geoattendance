@@ -494,6 +494,7 @@ switch (@$_GET['action']) {
             <th scope="col" class="align-middle">Absen Masuk</th>
             <th scope="col" class="align-middle">Absen Pulang</th>
             <th scope="col" class="align-middle hidden-sm">Status</th>
+            <th scope="col" class="align-middle hidden-sm">File Upload</th>
             <th scope="col" class="align-middle">Aksi</th>
         </tr>
     </thead>
@@ -507,7 +508,7 @@ switch (@$_GET['action']) {
     $newtimestamp   = strtotime('' . $shift_time_in . ' + 05 minute');
     $newtimestamp   = date('H:i:s', $newtimestamp);
 
-    $query_absen = "SELECT presence_id,presence_date,picture_in,time_in,picture_out,time_out,present_id, latitude_longtitude_in, latitude_longtitude_out,information,TIMEDIFF(TIME(time_in),'$shift_time_in') AS selisih,if (time_in>'$shift_time_in','Telat',if(time_in='00:00:00','Tidak Masuk','Tepat Waktu')) AS status, if (time_out<'$shift_time_out','Pulang Cepat','Tepat Waktu') AS status_pulang FROM presence WHERE employees_id='$row_user[id]' AND $filter ORDER BY presence_id DESC";
+    $query_absen = "SELECT presence_id,presence_date,picture_in,time_in,picture_out,time_out,present_id, latitude_longtitude_in, latitude_longtitude_out,information,TIMEDIFF(TIME(time_in),'$shift_time_in') AS selisih,if (time_in>'$shift_time_in','Telat',if(time_in='00:00:00','Tidak Masuk','Tepat Waktu')) AS status, if (time_out<'$shift_time_out','Pulang Cepat','Tepat Waktu') AS status_pulang,fileupload FROM presence WHERE employees_id='$row_user[id]' AND $filter ORDER BY presence_id DESC";
     $result_absen = $connection->query($query_absen);
     if ($result_absen->num_rows > 0) {
       while ($row_absen = $result_absen->fetch_assoc()) {
@@ -536,6 +537,8 @@ switch (@$_GET['action']) {
           $status_pulang = '';
         }
 
+        $fileuploadName=$row_absen['fileupload'];
+
         echo '
         <tr>
             <th class="text-center">' . $no . '</th>
@@ -548,6 +551,8 @@ switch (@$_GET['action']) {
             <span class="badge badge-success">' . $row_absen['time_out'] . '</span></a> ' . $status_pulang . '</td>
 
             <td class="hidden-sm">' . $row_aa['present_name'] . '' . $information . '</td>
+            <td><a class="image-link" href="./sw-content/fileupload/' . $row_absen['fileupload'] . '">
+            <span class="badge badge-success">' . $row_absen['fileupload'] . '</span></a></td>
             <td class="text-center">
               <button type="button" class="btn btn-success btn-sm modal-update" data-id="' . $row_absen['presence_id'] . '" data-masuk="' . $row_absen['time_in'] . '" data-pulang="' . $row_absen['time_out'] . '" data-date="' . tgl_indo($row_absen['presence_date']) . '" data-information="' . $row_absen['information'] . '" data-status="' . $row_absen['present_id'] . '" data-toggle="modal" data-target="#modal-show"><i class="fas fa-pencil-alt"></i></button>
             </td>
@@ -624,15 +629,67 @@ switch (@$_GET['action']) {
 
     $information = mysqli_real_escape_string($connection, $_POST['information']);
 
+    // File Upload Code
+    $files        = $_FILES["file_upload"]["name"];
+    $lokasi_file  = $_FILES['file_upload']['tmp_name'];
+    $ukuran_file  = $_FILES['file_upload']['size'];
+    $extension    = getExtension($files);
+    $extension    = strtolower($extension);
+    list($width, $height) = getimagesize($lokasi_file);
+
+
+
+    if ($extension == "jpg" || $extension == "jpeg") {
+      $src = imagecreatefromjpeg($lokasi_file);
+    } else if ($extension == "png") {
+      $src = imagecreatefrompng($lokasi_file);
+    } else {
+      $src = imagecreatefromgif($lokasi_file);
+    }
+    list($width, $height) = getimagesize($lokasi_file);
+
+    /* ---------- Set Size Foto ----------------*/
+    $width_new  = 300;
+    $height_new = ($height / $width) * $width_new;
+    $tmp_name   = imagecreatetruecolor($width_new, $height_new);
+    imagecopyresampled($tmp_name, $src, 0, 0, 0, 0, $width_new, $height_new, $width, $height);
+    /* ---------- Set Size Foto ----------------*/
+
+     
+   
+
+ 
+
     if (empty($error)) {
-      $update = "UPDATE presence SET present_id='$present_id',
-                    information='$information' WHERE presence_id='$presence_id' AND employees_id='$row_user[id]'";
-      if ($connection->query($update) === false) {
-        die($connection->error . __LINE__);
-        echo 'Data tidak berhasil disimpan!';
+
+      if (($extension = "jpg") && ($extension = "jpeg") && ($extension = "png")) {
+        if ($ukuran_file < 50000000) {
+          /* -------- Upload Foto Masuk -------*/
+          $filename = '' . $date . '-in-' . time() . '-' . $row_user['id'] . '.jpeg';
+          $directory = "../sw-content/fileupload/" . $filename;
+          
+          /* -------- Upload Foto Masuk -------*/
+          $update = "UPDATE presence SET present_id='$present_id',
+          fileupload='$filename',
+          information='$information' WHERE presence_id='$presence_id' AND employees_id='$row_user[id]'";
+          if ($connection->query($update) === false) {
+            die($connection->error . __LINE__);
+            echo 'Data tidak berhasil disimpan!';
+          } else {
+            $uploadAction=imagejpeg($tmp_name, $directory, 80);
+            if($uploadAction){
+              echo 'success';
+            }else{
+              echo $uploadAction;
+            }
+          }
+        } else {
+          echo 'Foto terlalu besar Maksimal Size 5MB.!';
+        }
       } else {
-        echo 'success';
+        echo 'Gambar/Foto yang di unggah tidak sesuai dengan format, Berkas harus berformat JPG,JPEG,PNG..!';
       }
+     
     } else {
       echo 'Bidang inputan tidak boleh ada yang kosong..!';
     }

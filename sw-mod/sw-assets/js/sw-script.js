@@ -399,10 +399,11 @@ $(document).ready(function () {
           loading();
         },
         success: function (data) {
+          console.log(data);
           if (data == 'success') {
             swal({
               title: 'Berhasil!',
-              text: 'Absensi berhasil di perbaharui!',
+              text: 'Absensi berhasil di perbaharui cuy!',
               icon: 'success',
               timer: 2000,
             });
