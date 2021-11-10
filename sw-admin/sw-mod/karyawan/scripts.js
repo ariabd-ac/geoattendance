@@ -184,4 +184,41 @@ $('.update-password').submit(function (e) {
 }); 
 
 
+/*------------ Logout -------------*/
+ $(document).on('click', '.logout', function(){ 
+        var id = $(this).attr("data-id");
+          swal({
+            text: "Anda yakin logout data ini?",
+            icon: "warning",
+              buttons: {
+                cancel: true,
+                confirm: true,
+              },
+            value: "logout",
+          })
+
+          .then((value) => {
+            if(value) {
+                loading();
+                $.ajax({  
+                     url:"sw-mod/karyawan/proses.php?action=logout",
+                     type:'POST',    
+                     data:{id:id},  
+                    success:function(data){ 
+                        if (data == 'success') {
+                            swal({title: 'Berhasil!', text: 'Data berhasil logout.!', icon: 'success', timer: 1500,});
+                            setTimeout(function(){ location.reload(); }, 1500);
+                        } else {
+                            swal({title: 'Gagal!', text: data, icon: 'error', timer: 1500,});
+                            
+                        }
+                     }  
+                });  
+           } else{  
+            return false;
+        }  
+    });
+}); 
+
+
 });

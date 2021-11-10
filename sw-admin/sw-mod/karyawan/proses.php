@@ -336,5 +336,22 @@ if (empty($_SESSION['SESSION_USER']) && empty($_SESSION['SESSION_ID'])) {
         die($connection->error . __LINE__);
       }
       break;
+
+      /* --------------- Delete ------------*/
+    case 'logout':
+      $id       = mysqli_real_escape_string($connection, epm_decode($_POST['id']));
+
+      
+      
+
+      $deleted  = "UPDATE employees SET flag_login=0 WHERE id='$id'";
+      if ($connection->query($deleted) === true) {
+        echo 'success';
+      } else {
+        //tidak berhasil
+        echo 'Data tidak berhasil dihapus.!';
+        die($connection->error . __LINE__);
+      }
+      break;
   }
 }

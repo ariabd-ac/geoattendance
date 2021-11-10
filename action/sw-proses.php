@@ -30,7 +30,7 @@ switch (@$_GET['action']) {
     if (empty($error)) {
       $update_user = mysqli_query($connection, "UPDATE employees SET created_login='$time_login',  created_cookies='$created_cookies' WHERE employees_password='$password'");
 
-      $query_login = "SELECT id,employees_email,employees_name,created_cookies FROM employees WHERE employees_code='$NIP' AND employees_password='$password'";
+      $query_login = "SELECT id,employees_email,employees_name,created_cookies,flag_login FROM employees WHERE employees_code='$NIP' AND employees_password='$password'";
       $result_login       = $connection->query($query_login);
       $row                = $result_login->fetch_assoc();
 
@@ -50,10 +50,17 @@ switch (@$_GET['action']) {
       $headers .= "MIME-Version: 1.0\r\n";
       $headers .= "Content-Type: text/html; charset=ISO-8859-1\r\n";
 
+    
       if ($result_login->num_rows > 0) {
-        setcookie('COOKIES_MEMBER', $COOKIES_MEMBER, $expired_cookie, '/');
-        setcookie('COOKIES_COOKIES', $COOKIES_COOKIES, $expired_cookie, '/');
-        echo 'success';
+        if(!$row['flag_login']){
+          setcookie('COOKIES_MEMBER', $COOKIES_MEMBER, $expired_cookie, '/');
+          setcookie('COOKIES_COOKIES', $COOKIES_COOKIES, $expired_cookie, '/');
+          $update_user = mysqli_query($connection, "UPDATE employees SET flag_login=1 WHERE id='$row[id]'");
+          echo 'success';
+
+        }else{
+          echo 'Tidak Boleh Login lagi';
+        }
       } else {
         echo 'NIP dan password yang Anda masukkan salah!';
       }

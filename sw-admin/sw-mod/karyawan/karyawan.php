@@ -44,6 +44,7 @@ if (empty($connection)) {
               <th>Jabatan</th>
               <th>Shift</th>
               <th>Lokasi</th>
+              <th>Login status</th>
               <th style="width:150px" class="text-right">Aksi</th>
             </tr>
             </thead>
@@ -63,16 +64,18 @@ if (empty($connection)) {
                 <td>' . $row['position_name'] . '</td>
                 <td>' . $row['shift_name'] . '</td>
                 <td>' . $row['name'] . '</td>
+                <td>' . ($row['flag_login'] == 1 ? 'Login' : 'Log Out' ) . '</td>
                 <td class="text-right">
                   <div class="btn-group">';
           if ($level_user == 1) {
             echo '
                     <a href="./' . $mod . '&op=edit&id=' . epm_encode($row['id']) . '" class="btn btn-warning btn-xs enable-tooltip" title="Edit"><i class="fa fa-pencil-square-o"></i> Ubah</a>
-                    <buton data-id="' . epm_encode($row['id']) . '" class="btn btn-xs btn-danger delete" title="Hapus"><i class="fa fa-trash-o"></i> Hapus</button>';
+                    <button data-id="' . epm_encode($row['id']) . '" class="btn btn-xs btn-danger delete" title="Hapus"><i class="fa fa-trash-o"></i> Hapus</button>';
+            echo    '<button data-id="' . epm_encode($row['id']) . '" class="btn btn-xs btn-success logout" title="Logout"><i class="fa fa-logout"></i> Logout</button>';
           } else {
             echo '
                     <button type="button" class="btn btn-warning btn-xs access-failed enable-tooltip" title="Edit"><i class="fa fa-pencil-square-o"></i> Ubah</button>
-                    <buton type="button" class="btn btn-xs btn-danger access-failed" title="Hapus"><i class="fa fa-trash-o"></i> Hapus</button>';
+                    <button type="button" class="btn btn-xs btn-danger access-failed" title="Hapus"><i class="fa fa-trash-o"></i> Hapus</button>';
           }
           echo '
                   </div>

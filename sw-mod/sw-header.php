@@ -70,7 +70,7 @@ if(isset($_COOKIE['COOKIES_MEMBER'])){
               echo'
                <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">';?>
                 <a class="dropdown-item" onclick="location.href='./profile';" href="./profile"><ion-icon size="small" name="person-outline"></ion-icon>Profil</a>
-                <a class="dropdown-item" onclick="location.href='./logout';" href="./logout"><ion-icon size="small" name="log-out-outline"></ion-icon>Keluar</a>
+                <!-- <a class="dropdown-item" onclick="location.href='./logout';" href="./logout"><ion-icon size="small" name="log-out-outline"></ion-icon>Keluar</a> -->
               </div>
             </div>
         </div>
@@ -153,14 +153,14 @@ echo'<!-- App Sidebar -->
                         </li>
 
                         </li>
-                        <li>
+                        <!-- <li>
                             <a href="./logout" class="item">
                                 <div class="icon-box bg-danger">
                                     <ion-icon name="log-out-outline"></ion-icon>
                                 </div>
                                     Keluar
                             </a>
-                        </li>
+                        </li> -->
 
                     </ul>
                     <!-- * menu -->
