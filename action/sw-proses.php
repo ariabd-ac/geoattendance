@@ -9,7 +9,8 @@ $browser = $iB['name'] . '-' . $iB['version'];
 $allowed_ext = array("png", "jpg", "jpeg");
 //$created_cookies = rand(19999,9999).rand(888888,111111).date('ymdhisss');
 $salt = '$%DEf0&TTd#%dSuTyr47542"_-^@#&*!=QxR094{a911}+';
-$expired_cookie = time() + 60 * 60 * 24 * 7;
+// $expired_cookie = time() + 60 * 60 * 24 * 7;
+$expired_cookie = time() + (10 * 365 * 24 * 60 * 60);
 
 switch (@$_GET['action']) {
   case 'login':
