@@ -61,7 +61,17 @@ echo'
                   <td>'.$row['shift_name'].'</td>
                   <td>'.$row['time_in'].'</td>
                   <td>'.$row['time_out'].'</td>
-                  <td class="text-center"><span class="badge bg-yellow">'.$result_count->num_rows.'</span></td>
+                  <td class="text-center">
+                    <span class="badge bg-yellow">'.$result_count->num_rows.'</span>';
+                    if($level_user==1){
+                      echo'
+                      <button type="button" class="btn btn-success btn-xs enable-tooltip btn-detail-shift" data-toggle="modal" data-shiftid="'. $row['shift_id'] .'" data-target="#modaldetailkaryawan"><i class="fa fa-table"></i>Detail</button>';
+                    }
+                      else{
+                      echo'<button type="button" class="btn btn-success btn-flat access-failed"><i class="fa fa-table"></i> Detail</button>';
+                      }
+                      echo'
+                  </td>
                   <td>
                     <div class="btn-group">';
                     if($level_user==1){
@@ -86,6 +96,31 @@ echo'
     </div>
   </div> 
 </section>
+
+<!-- Modal Edit Detail Shift Karyawan -->
+<div class="modal fade" id="modaldetailkaryawan" data-backdrop="static" data-keyboard="false">
+  <div class="modal-dialog modal-md">
+    <div class="modal-content">
+    
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title">Detail Karayawan</h4>
+      </div>
+      <div class="modal-body">
+        <div id="tbody-detail-karyawan">
+
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="submit" class="btn btn-primary pull-left" id="submit-detail-shift"><i class="fa fa-check"></i> Simpan</button>
+        <button type="button" class="btn btn-danger pull-right" data-dismiss="modal"><i class="fa fa-remove"></i> Batal</button>
+      </div>
+    
+    </div>
+  </div>
+</div>
+<!-- Modal Edit Detail Shift Karyawan -->
 
 <!-- Add -->
 <div class="modal fade" id="modalAdd" data-backdrop="static" data-keyboard="false">
