@@ -139,9 +139,9 @@ if (empty($connection)) {
         echo '<option value="10">Oktober</option>';
       }
       if ($month == 11) {
-        echo '<option value="12" selected>November</option>';
+        echo '<option value="11" selected>November</option>';
       } else {
-        echo '<option value="12">November</option>';
+        echo '<option value="11">November</option>';
       }
       if ($month == 12) {
         echo '<option value="12" selected>Desember</option>';
@@ -275,9 +275,9 @@ if (empty($connection)) {
             echo '<option value="10">Oktober</option>';
           }
           if ($month == 11) {
-            echo '<option value="12" selected>November</option>';
+            echo '<option value="11" selected>November</option>';
           } else {
-            echo '<option value="12">November</option>';
+            echo '<option value="11">November</option>';
           }
           if ($month == 12) {
             echo '<option value="12" selected>Desember</option>';
