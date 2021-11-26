@@ -59,4 +59,4 @@ if(!isset($_COOKIE['COOKIES_MEMBER']) && !isset($_COOKIE['COOKIES_COOKIES'])){
 
   }
   include_once 'sw-mod/sw-footer.php';
-} ?>
+}
