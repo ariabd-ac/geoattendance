@@ -68,6 +68,7 @@ if (empty($_SESSION['SESSION_USER']) && empty($_SESSION['SESSION_ID'])) {
 ---------------------------------*/
     case 'update':
       $error = array();
+
       if (empty($_POST['id'])) {
         $error[] = 'ID tidak boleh kosong';
       } else {

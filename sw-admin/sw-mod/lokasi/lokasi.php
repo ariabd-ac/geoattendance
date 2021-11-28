@@ -69,7 +69,7 @@ if (empty($connection)) {
                     <div class="btn-group">';
           if ($level_user == 1) {
             echo '
-                      <a href="#modalEdit" class="btn btn-warning btn-xs enable-tooltip" title="Edit" data-toggle="modal"'; ?> onclick="getElementById('txtid').value='<?PHP echo $row['building_id']; ?>';getElementById('txtname').value='<?PHP echo $row['name']; ?>';getElementById('txtaddress').value='<?PHP echo $row['address']; ?>';"><i class="fa fa-pencil-square-o"></i> Ubah</a>
+                      <a href="#modalEdit" class="btn btn-warning btn-xs enable-tooltip" title="Edit" data-toggle="modal"'; ?> onclick="getElementById('txtid').value='<?PHP echo $row['building_id']; ?>';getElementById('txtname').value='<?PHP echo $row['name']; ?>';getElementById('txtaddress').value='<?PHP echo $row['address']; ?>';getElementById('lat_building').value='<?PHP echo $row['lat_building']; ?>';getElementById('long_building').value='<?PHP echo $row['long_building']; ?>';"><i class="fa fa-pencil-square-o"></i> Ubah</a>
   <?php echo '
                       <buton data-id="' . epm_encode($row['building_id']) . '" class="btn btn-xs btn-danger delete" title="Hapus"><i class="fa fa-trash-o"></i> Hapus</button>';
           } else {
@@ -159,12 +159,12 @@ if (empty($connection)) {
 
           <div class="form-group">
             <label>Lat Sekolah</label>
-            <input type="text" class="form-control" name="lat_building" required>
+            <input type="text" class="form-control"  id="lat_building" name="lat_building" required>
           </div>
 
           <div class="form-group">
             <label>Long Sekolah</label>
-            <input type="text" class="form-control" name="long_building" required>
+            <input type="text" class="form-control" id="long_building" name="long_building" required>
           </div>
       </div>
       <div class="modal-footer">
