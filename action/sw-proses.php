@@ -51,15 +51,14 @@ switch (@$_GET['action']) {
       $headers .= "MIME-Version: 1.0\r\n";
       $headers .= "Content-Type: text/html; charset=ISO-8859-1\r\n";
 
-    
+
       if ($result_login->num_rows > 0) {
-        if(!$row['flag_login']){
+        if (!$row['flag_login']) {
           setcookie('COOKIES_MEMBER', $COOKIES_MEMBER, $expired_cookie, '/');
           setcookie('COOKIES_COOKIES', $COOKIES_COOKIES, $expired_cookie, '/');
           $update_user = mysqli_query($connection, "UPDATE employees SET flag_login=1 WHERE id='$row[id]'");
           echo 'success';
-
-        }else{
+        } else {
           echo 'Tidak Boleh Login lagi';
         }
       } else {
@@ -545,7 +544,7 @@ switch (@$_GET['action']) {
           $status_pulang = '';
         }
 
-        $fileuploadName=$row_absen['fileupload'];
+        $fileuploadName = $row_absen['fileupload'];
 
         echo '
         <tr>
@@ -663,10 +662,10 @@ switch (@$_GET['action']) {
     imagecopyresampled($tmp_name, $src, 0, 0, 0, 0, $width_new, $height_new, $width, $height);
     /* ---------- Set Size Foto ----------------*/
 
-     
-   
 
- 
+
+
+
 
     if (empty($error)) {
 
@@ -675,7 +674,7 @@ switch (@$_GET['action']) {
           /* -------- Upload Foto Masuk -------*/
           $filename = '' . $date . '-in-' . time() . '-' . $row_user['id'] . '.jpeg';
           $directory = "../sw-content/fileupload/" . $filename;
-          
+
           /* -------- Upload Foto Masuk -------*/
           $update = "UPDATE presence SET present_id='$present_id',
           fileupload='$filename',
@@ -684,10 +683,10 @@ switch (@$_GET['action']) {
             die($connection->error . __LINE__);
             echo 'Data tidak berhasil disimpan!';
           } else {
-            $uploadAction=imagejpeg($tmp_name, $directory, 80);
-            if($uploadAction){
+            $uploadAction = imagejpeg($tmp_name, $directory, 80);
+            if ($uploadAction) {
               echo 'success';
-            }else{
+            } else {
               echo $uploadAction;
             }
           }
@@ -697,7 +696,6 @@ switch (@$_GET['action']) {
       } else {
         echo 'Gambar/Foto yang di unggah tidak sesuai dengan format, Berkas harus berformat JPG,JPEG,PNG..!';
       }
-     
     } else {
       echo 'Bidang inputan tidak boleh ada yang kosong..!';
     }
@@ -785,6 +783,12 @@ switch (@$_GET['action']) {
       $cuty_description  = anti_injection($_POST['cuty_description']);
     }
 
+    if (empty($_POST['pilihCuti'])) {
+      $error[] = 'tidak boleh kosong';
+    } else {
+      $pilihCuti = anti_injection($_POST['pilihCuti']);
+    }
+
 
     if (empty($error)) {
       $add = "INSERT INTO cuty (employees_id,
@@ -793,13 +797,15 @@ switch (@$_GET['action']) {
               date_work,
               cuty_total,
               cuty_description,
-              cuty_status) values('$row_user[id]',
+              cuty_status,
+              jenis_cuty) values('$row_user[id]',
               '$cuty_start',
               '$cuty_end',
               '$date_work',
               '$cuty_total',
               '$cuty_description',
-              '3')";
+              '3',
+              '$pilihCuti')";
       if ($connection->query($add) === false) {
         die($connection->error . __LINE__);
         echo 'Data tidak berhasil disimpan!';
@@ -852,13 +858,20 @@ switch (@$_GET['action']) {
       $cuty_description  = anti_injection($_POST['cuty_description']);
     }
 
+    if (empty($_POST['pilihCuti'])) {
+      $error[] = 'tidak boleh kosong';
+    } else {
+      $pilihCuti = anti_injection($_POST['pilihCuti']);
+    }
+
 
     if (empty($error)) {
       $update = "UPDATE cuty SET cuty_start='$cuty_start',
             cuty_end='$cuty_end',
             date_work='$date_work',
             cuty_total='$cuty_total',
-            cuty_description='$cuty_description' WHERE cuty_id='$cuty_id'";
+            cuty_description='$cuty_description',
+            jenis_cuty='$pilihCuti' WHERE cuty_id='$cuty_id'";
       if ($connection->query($update) === false) {
         die($connection->error . __LINE__);
         echo 'Data tidak berhasil disimpan!';
