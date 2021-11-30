@@ -15,7 +15,7 @@ $pacth_url	= 'http://' . $_SERVER["HTTP_HOST"] . $_SERVER["REQUEST_URI"] . '';
 // vps
 $DB_HOST 	= 'localhost';
 $DB_USER 	= 'root'; // User Database
-$DB_PASSWD  = 'Server*123#'; // Password Database
+$DB_PASSWD  = '12345'; // Password Database
 $DB_NAME 	= 'absensi_v3'; // Nama database
 
 // -------------- Koneksi Database ------------

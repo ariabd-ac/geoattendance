@@ -236,6 +236,8 @@ switch (@$_GET['action']) {
 
     // ------------- Absen -------------*/
   case 'absent':
+    $type=$_GET['type'];
+
     $error = array();
     $files        = $_FILES["webcam"]["name"];
     $lokasi_file  = $_FILES['webcam']['tmp_name'];
@@ -305,31 +307,53 @@ switch (@$_GET['action']) {
               $filename = '' . $date . '-in-' . time() . '-' . $row_user['id'] . '.jpeg';
               $directory = "../sw-content/absent/" . $filename;
               /* -------- Upload Foto Masuk -------*/
-              $add = "INSERT INTO presence (employees_id,
-                              presence_date,
-                              time_in,
-                              time_out,
-                              picture_in,
-                              picture_out,
-                              present_id,
-                              latitude_longtitude_in,
-                              latitude_longtitude_out,
-                              information) values('$row_u[id]',
-                              '$date',
-                              '$time',
-                              '00:00:00',
-                              '$filename',
-                              '', /*picture out kosong*/
-                              '1', /*hadir*/
-                              '$latitude',
-                              '',
-                              '')";
+              if($type == "masuk"){
+                $add = "INSERT INTO presence (employees_id,
+                                presence_date,
+                                time_in,
+                                time_out,
+                                picture_in,
+                                picture_out,
+                                present_id,
+                                latitude_longtitude_in,
+                                latitude_longtitude_out,
+                                information) values('$row_u[id]',
+                                '$date',
+                                '$time',
+                                '00:00:00',
+                                '$filename',
+                                '', /*picture out kosong*/
+                                '1', /*hadir*/
+                                '$latitude',
+                                '',
+                                '')";
+              }else{
+                $add = "INSERT INTO presence (employees_id,
+                          presence_date,
+                          time_in,
+                          time_out,
+                          picture_in,
+                          picture_out,
+                          present_id,
+                          latitude_longtitude_in,
+                          latitude_longtitude_out,
+                          information) values('$row_u[id]',
+                          '$date',
+                          '00:00:00',
+                          '$time',
+                          '$filename',
+                          '', /*picture out kosong*/
+                          '1', /*hadir*/
+                          '$latitude',
+                          '',
+                          '')";
+              }
 
               if ($connection->query($add) === false) {
                 die($connection->error . __LINE__);
                 echo 'Sepertinya Sistem Kami sedang error!';
               } else {
-                echo 'success/Selamat Anda berhasil Absen Masuk pada Tanggal ' . tanggal_ind($date) . ' dan Jam : ' . $time . ', Semangat bekerja "' . $row_u['employees_name'] . '" !';
+                echo 'success/Selamat Anda berhasil Absen '.ucfirst($type).' pada Tanggal ' . tanggal_ind($date) . ' dan Jam : ' . $time . ', Semangat bekerja "' . $row_u['employees_name'] . '" !';
                 imagejpeg($tmp_name, $directory, 80);
               }
             }

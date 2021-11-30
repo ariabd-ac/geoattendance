@@ -37,13 +37,15 @@ if(!isset($_COOKIE['COOKIES_MEMBER']) && !isset($_COOKIE['COOKIES_COOKIES'])){
                 <div class="wallet-footer text-center">
                     <div class="webcam-capture-body text-center">
                         <div class="webcam-capture"></div>
-                        <div class="form-group basic">';
+                        <div class="form-group basic">
+                            ';
                             if($result_absent->num_rows > 0){
                                 echo'
-                                <button class="btn btn-success btn-lg btn-block" onClick="captureimage(0)"><ion-icon name="camera-outline"></ion-icon>Absen Pulang</button>';}
+                                <button class="btn btn-success btn-lg btn-block" onClick="captureimage(0,2)"><ion-icon name="camera-outline"></ion-icon>Absen Pulang</button>';}
                                 else{
                                 echo'
-                                <button class="btn btn-success btn-lg btn-block" onClick="captureimage(0)"><ion-icon name="camera-outline"></ion-icon>Absen Masuk</button>';}
+                                <button class="btn btn-success btn-lg btn-block" onClick="captureimage(0,1)"><ion-icon name="camera-outline"></ion-icon>Absen Masuk</button>
+                                <button class="btn btn-success btn-lg btn-block" onClick="captureimage(0,2)"><ion-icon name="camera-outline"></ion-icon>Absen Pulang</button>';}
                         echo'
                         </div>';
                 echo'
