@@ -1,19 +1,19 @@
-<?php 
-if ($mod ==''){
+<?php
+if ($mod == '') {
     header('location:../404');
-    echo'kosong';
-}else{
+    echo 'kosong';
+} else {
     include_once 'sw-mod/sw-header.php';
-if(!isset($_COOKIE['COOKIES_MEMBER']) && !isset($_COOKIE['COOKIES_COOKIES'])){
+    if (!isset($_COOKIE['COOKIES_MEMBER']) && !isset($_COOKIE['COOKIES_COOKIES'])) {
         setcookie('COOKIES_MEMBER', '', 0, '/');
         setcookie('COOKIES_COOKIES', '', 0, '/');
         // Login tidak ditemukan
-        setcookie("COOKIES_MEMBER", "", time()-$expired_cookie);
-        setcookie("COOKIES_COOKIES", "", time()-$expired_cookie);
+        setcookie("COOKIES_MEMBER", "", time() - $expired_cookie);
+        setcookie("COOKIES_COOKIES", "", time() - $expired_cookie);
         session_destroy();
         header("location:./");
-}else{
-  echo'<!-- App Capsule -->
+    } else {
+        echo '<!-- App Capsule -->
     <div id="appCapsule">
     <div class="section mt-2">
     <div class="card">
@@ -36,7 +36,7 @@ if(!isset($_COOKIE['COOKIES_MEMBER']) && !isset($_COOKIE['COOKIES_COOKIES'])){
             <div class="form-group basic">
                 <div class="input-wrapper">
                     <div class="input-group">
-                        <input type="text" name="end_date" class="form-control datepicker end_date" value="'.tanggal_ind($date).'">
+                        <input type="text" name="end_date" class="form-control datepicker end_date" value="' . tanggal_ind($date) . '">
                         <div class="input-group-addon">
                             <ion-icon name="calendar-outline"></ion-icon>
                         </div>
@@ -80,7 +80,7 @@ if(!isset($_COOKIE['COOKIES_MEMBER']) && !isset($_COOKIE['COOKIES_COOKIES'])){
                             <div class="form-group basic">
                                 <div class="input-wrapper">
                                     <label class="label">Nama</label>
-                                    <input type="text" class="form-control" name="name" value="'.$row_user['employees_name'].'" style="background:#eee" readonly required>
+                                    <input type="text" class="form-control" name="name" value="' . $row_user['employees_name'] . '" style="background:#eee" readonly required>
                                     <i class="clear-input"><ion-icon name="close-circle"></ion-icon></i>
                                 </div>
                             </div>
@@ -89,7 +89,7 @@ if(!isset($_COOKIE['COOKIES_MEMBER']) && !isset($_COOKIE['COOKIES_COOKIES'])){
                                 <div class="input-wrapper">
                                     <label class="label">Mulai Cuti</label>
                                         <div class="input-group">
-                                            <input type="text" class="form-control datepicker" id="cutystart" name="cuty_start" placeholder="'.tanggal_ind($date).'" value="'.tanggal_ind($date).'" required>
+                                            <input type="text" class="form-control datepicker" id="cutystart" name="cuty_start" placeholder="' . tanggal_ind($date) . '" value="' . tanggal_ind($date) . '" required>
                                             <div class="input-group-addon">
                                                 <ion-icon name="calendar-outline"></ion-icon>
                                             </div>
@@ -101,7 +101,7 @@ if(!isset($_COOKIE['COOKIES_MEMBER']) && !isset($_COOKIE['COOKIES_COOKIES'])){
                                 <div class="input-wrapper">
                                     <label class="label">Berakhir Cuti</label>
                                         <div class="input-group">
-                                            <input type="text" class="form-control datepicker" id="cutyend" name="cuty_end" placeholder="'.tanggal_ind($date).'" value="" required>
+                                            <input type="text" class="form-control datepicker" id="cutyend" name="cuty_end" placeholder="' . tanggal_ind($date) . '" value="" required>
                                             <div class="input-group-addon">
                                                 <ion-icon name="calendar-outline"></ion-icon>
                                             </div>
@@ -113,7 +113,7 @@ if(!isset($_COOKIE['COOKIES_MEMBER']) && !isset($_COOKIE['COOKIES_COOKIES'])){
                                 <div class="input-wrapper">
                                     <label class="label">Tanggal Masuk Kerja</label>
                                         <div class="input-group">
-                                            <input type="text" class="form-control datepicker" name="date_work" placeholder="'.tanggal_ind($date).'" value="" required>
+                                            <input type="text" class="form-control datepicker" name="date_work" placeholder="' . tanggal_ind($date) . '" value="" required>
                                             <div class="input-group-addon">
                                                 <ion-icon name="calendar-outline"></ion-icon>
                                             </div>
@@ -134,6 +134,17 @@ if(!isset($_COOKIE['COOKIES_MEMBER']) && !isset($_COOKIE['COOKIES_COOKIES'])){
                                     <label class="label">Keterangan</label>
                                    <textarea rows="2" class="form-control cuty_description" name="cuty_description" required></textarea>
                                     <i class="clear-input"><ion-icon name="close-circle"></ion-icon></i>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <div class="input-wrapper">
+                                    <label class="label">Pilihan Cuti</label>
+                                    <select class="form-control" id="pilihCuti" name="pilihCuti">
+                                        <option value="dl">Dinas Luar (DL)</option>
+                                        <option value="dk">Diklat</option>
+                                        <option value="car">Cuti Alesan Penting (CAR)</option>
+                                    </select>
                                 </div>
                             </div>
 
@@ -162,7 +173,7 @@ if(!isset($_COOKIE['COOKIES_MEMBER']) && !isset($_COOKIE['COOKIES_COOKIES'])){
                             <div class="form-group basic">
                                 <div class="input-wrapper">
                                     <label class="label">Nama</label>
-                                    <input type="text" class="form-control" name="name" value="'.$row_user['employees_name'].'" style="background:#eee" readonly required>
+                                    <input type="text" class="form-control" name="name" value="' . $row_user['employees_name'] . '" style="background:#eee" readonly required>
                                     <i class="clear-input"><ion-icon name="close-circle"></ion-icon></i>
                                 </div>
                             </div>
@@ -171,7 +182,7 @@ if(!isset($_COOKIE['COOKIES_MEMBER']) && !isset($_COOKIE['COOKIES_COOKIES'])){
                                 <div class="input-wrapper">
                                     <label class="label">Mulai Cuti</label>
                                         <div class="input-group">
-                                            <input type="text" class="form-control datepicker" id="cuty-start" name="cuty_start" placeholder="'.tanggal_ind($date).'" value="" required>
+                                            <input type="text" class="form-control datepicker" id="cuty-start" name="cuty_start" placeholder="' . tanggal_ind($date) . '" value="" required>
                                             <div class="input-group-addon">
                                                 <ion-icon name="calendar-outline"></ion-icon>
                                             </div>
@@ -183,7 +194,7 @@ if(!isset($_COOKIE['COOKIES_MEMBER']) && !isset($_COOKIE['COOKIES_COOKIES'])){
                                 <div class="input-wrapper">
                                     <label class="label">Berakhir Cuti</label>
                                         <div class="input-group">
-                                            <input type="text" class="form-control datepicker" id="cuty-end" name="cuty_end" placeholder="'.tanggal_ind($date).'" value="" required>
+                                            <input type="text" class="form-control datepicker" id="cuty-end" name="cuty_end" placeholder="' . tanggal_ind($date) . '" value="" required>
                                             <div class="input-group-addon">
                                                 <ion-icon name="calendar-outline"></ion-icon>
                                             </div>
@@ -195,7 +206,7 @@ if(!isset($_COOKIE['COOKIES_MEMBER']) && !isset($_COOKIE['COOKIES_COOKIES'])){
                                 <div class="input-wrapper">
                                     <label class="label">Tanggal Masuk Kerja</label>
                                         <div class="input-group">
-                                            <input type="text" class="form-control datepicker" id="date-work" name="date_work" placeholder="'.tanggal_ind($date).'" value="" required>
+                                            <input type="text" class="form-control datepicker" id="date-work" name="date_work" placeholder="' . tanggal_ind($date) . '" value="" required>
                                             <div class="input-group-addon">
                                                 <ion-icon name="calendar-outline"></ion-icon>
                                             </div>
@@ -219,6 +230,20 @@ if(!isset($_COOKIE['COOKIES_MEMBER']) && !isset($_COOKIE['COOKIES_COOKIES'])){
                                 </div>
                             </div>
 
+                            <div class="form-group">
+                                <div class="input-wrapper">
+                                    <label class="label">Pilihan Cuti</label>
+                                    <select class="form-control" id="pilihCuti" name="pilihCuti" required>
+                                        <option value="">------Edit Cuti------</option>
+                                        <option value="dl">Dinas Luar (DL)</option>
+                                        <option value="dk">Diklat</option>
+                                        <option value="car">Cuti Alesan Penting (CAR)</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            
+
                             <div class="form-group basic">
                                 <button type="submit" class="btn btn-danger btn-block btn-lg mt-2">Simpan</button>
                             </div>
@@ -231,7 +256,6 @@ if(!isset($_COOKIE['COOKIES_MEMBER']) && !isset($_COOKIE['COOKIES_COOKIES'])){
     <!-- * END UPDATE -->
 
 </div>';
-
-  }
-  include_once 'sw-mod/sw-footer.php';
-} ?>
+    }
+    include_once 'sw-mod/sw-footer.php';
+}
