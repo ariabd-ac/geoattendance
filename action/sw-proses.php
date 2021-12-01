@@ -316,7 +316,7 @@ switch (@$_GET['action']) {
                                 present_id,
                                 latitude_longtitude_in,
                                 latitude_longtitude_out,
-                                information) values('$row_u[id]',
+                                information,shift_id) values('$row_u[id]',
                                 '$date',
                                 '$time',
                                 '00:00:00',
@@ -325,7 +325,8 @@ switch (@$_GET['action']) {
                                 '1', /*hadir*/
                                 '$latitude',
                                 '',
-                                '')";
+                                '',
+                                '$row_u[shift_id]')";
               }else{
                 $add = "INSERT INTO presence (employees_id,
                           presence_date,
@@ -336,7 +337,7 @@ switch (@$_GET['action']) {
                           present_id,
                           latitude_longtitude_in,
                           latitude_longtitude_out,
-                          information) values('$row_u[id]',
+                          information,shift_id) values('$row_u[id]',
                           '$date',
                           '00:00:00',
                           '$time',
@@ -345,7 +346,8 @@ switch (@$_GET['action']) {
                           '1', /*hadir*/
                           '$latitude',
                           '',
-                          '')";
+                          '',
+                          '$row_u[shift_id]')";
               }
 
               if ($connection->query($add) === false) {
