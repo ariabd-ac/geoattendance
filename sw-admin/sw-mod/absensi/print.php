@@ -590,14 +590,17 @@ if (empty($_SESSION['SESSION_USER']) && empty($_SESSION['SESSION_ID'])) {
               $status = 'Libur Akhir Pekan';
             }
             $date_month_year = '' . $year . '-' . $bulan . '-' . $d . '';
-
+            
             if (isset($_GET['from']) or isset($_GET['to'])) {
               $month = $_GET['from'];
               $year  = $_GET['to'];
               $filter = "employees_id='$id' AND presence_date='$date_month_year' AND MONTH(presence_date)='$month' AND year(presence_date)='$year'";
+            
             } else {
               $filter = "employees_id='$id' AND presence_date='$date_month_year' AND MONTH(presence_date) ='$month'";
+             
             }
+            // $filter_cuty= "employees_id='$id' AND (MONTH(cuty_start) ='$month' OR (MONTH(cuty_end)='$month'))";
 
 
             $query_absen = "SELECT presence_id,presence_date,time_in,time_out,picture_in,picture_out,present_id,latitude_longtitude_in,information,TIMEDIFF(TIME(time_in),'$shift_time_in') AS selisih,if (time_in>'$shift_time_in','Telat',if(time_in='00:00:00','Tidak Masuk','Tepat Waktu')) AS status FROM presence WHERE $filter";
@@ -671,8 +674,10 @@ if (empty($_SESSION['SESSION_USER']) && empty($_SESSION['SESSION_ID'])) {
             $month = $_GET['from'];
             $year  = $_GET['to'];
             $filter = "employees_id='$id' AND MONTH(presence_date)='$month' AND year(presence_date)='$year' AND employees_id='$id'";
+            
           } else {
             $filter = "employees_id='$id' AND MONTH(presence_date) ='$month' AND employees_id='$id'";
+            
           }
 
           $query_hadir = "SELECT presence_id FROM presence WHERE $filter AND present_id='1' ORDER BY presence_id DESC";
@@ -815,17 +820,26 @@ echo '
           $query_telat = "SELECT presence_id FROM presence WHERE $filter AND time_in>'$shift_time_in'";
           $telat = $connection->query($query_telat);
           $kwk=1;
-          $wfh=1;
+          $queryWFH= "SELECT presence_id FROM presence WHERE $filter AND shift_id=6";
+          $wfh=$connection->query($queryWFH)->num_rows;
           $alpha=$jumlahhari - $hadir->num_rows;
-          $dinas_luar=1;
-          $diklat=1;
-          $cuti_alasan_penting=1;
+
+          $query_dinas_luar="SELECT cuty_id FROM cuty WHERE employees_id='$id' AND MONTH(cuty_start) ='$month' AND jenis_cuty='dl'";
+          $dinas_luar=$connection->query($query_dinas_luar)->num_rows;
+
+          $query_diklat="SELECT cuty_id FROM cuty WHERE employees_id='$id' AND MONTH(cuty_start) ='$month' AND jenis_cuty='dk'";
+
+          $diklat=$connection->query($query_diklat)->num_rows;
+
+          $query_alasan_penting="SELECT cuty_id FROM cuty WHERE employees_id='$id' AND MONTH(cuty_start) ='$month' AND jenis_cuty='car'";
+          $cuti_alasan_penting=$connection->query($query_alasan_penting)->num_rows;
           
-          $query_pulang_cepat = "SELECT presence_id FROM presence WHERE $filter AND time_in=NULL AND time_out NOT NULL";
-          $tidak_absen_masuk=1;
+          $qery_tidak_absen_masuk = "SELECT presence_id FROM presence WHERE $filter AND time_in='00:00:00' AND time_out <> '00:00:00'";
+          $tidak_absen_masuk=$connection->query($qery_tidak_absen_masuk)->num_rows;
           
-          $query_pulang_cepat = "SELECT presence_id FROM presence WHERE $filter AND time_in>'$shift_time_out'";
-          $tidak_absen_keluar=1;
+          
+          $query_tidak_absen_keluar = "SELECT presence_id FROM presence WHERE $filter AND time_in>'$shift_time_out'";
+          $tidak_absen_keluar=$connection->query($query_tidak_absen_keluar)->num_rows;
 
           $query_pulang_cepat = "SELECT presence_id FROM presence WHERE $filter AND time_out<'$shift_time_out'";
           
