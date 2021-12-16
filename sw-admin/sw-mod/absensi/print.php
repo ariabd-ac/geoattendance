@@ -3,6 +3,10 @@ error_reporting(0);
 require_once '../../../sw-library/sw-config.php';
 require_once '../../../sw-library/sw-function.php';
 include_once '../../../sw-library/vendor/autoload.php';
+
+$list_month=["Januari","Februari","Maret","April","Mei","Juni","Juli","Agustus","September","Oktober","November","Desember"];
+
+
 if (empty($_SESSION['SESSION_USER']) && empty($_SESSION['SESSION_ID'])) {
   //Kondisi tidak login
   header('location:../login/');
@@ -61,29 +65,44 @@ if (empty($_SESSION['SESSION_USER']) && empty($_SESSION['SESSION_ID'])) {
       <div class="row">';
           if (isset($_GET['from']) or isset($_GET['to'])) {
             // echo '<img src="../../../sw-content/kop.PNG">';
-            echo '<h3 class="text-center">LAPORAN DETAIL HARIAN<br>PERIODE WAKTU ' . tanggal_indo($_GET['from']) . ' - ' . $_GET['to'] . '</h3>';
+            echo '<h3 class="text-center">SMK NEGERI 1 KALIWUNGU<br>REKAP PERSONAL '. $row['employees_name'].'<br>BULAN ' . $list_month[$_GET['from'] - 1] . ' TAHUN ' . $_GET['to'] . '</h3>';
           } else {
             echo '<h3 class="text-center">LAPORAN DETAIL BULAN<br>' . tanggal_indo($month) . ' - ' . $year . '</h3>';
           }
+          $today=date('');
           echo '
-        <p>Nama   : ' . $row['employees_name'] . '</p>
-        <p>Jabatan : ' . $row['position_name'] . '</p><br>
+        <p>Tanggal : '.date('d').' '.$list_month[date('n') - 1].' '.date('Y').' / Pukul : '.date('H').':'.date('i').'</p>
+        <!-- <p>Jabatan : ' . $row['position_name'] . '</p><br> -->
       <div class="content_box">
         <table class="customTable">
           <thead>
             <tr>
-              <th class="text-center">No.</th>
-              <th>Tanggal</th>
+              <th class="text-center" rowspan="2">No.</th>
+              <th rowspan="2">Tanggal</th>
+              <!-- <th class="text-center">Jam Masuk</th> -->
+              <!-- <th class="text-center">Scan Masuk</th> -->
+              <th class="text-center" colspan="4">Absen</th>
+              <!-- <th class="text-center">Jam Pulang</th> -->
+              <!-- <th class="text-center">Scan Pulang</th> -->
+              <!-- <th class="text-center">Lokasi</th> -->
+              <!-- <th>Durasi</th> -->
+              <!-- <th>Lembur</th> -->
+              <th rowspan="2">Status</th>
+              <th rowspan="2">KWK</th>
+            </tr>
+            <tr>
+              <!-- <th class="text-center"></th>
+              <th></th> -->
               <th class="text-center">Jam Masuk</th>
-              <th class="text-center">Scan Masuk</th>
-              <th>Terlambat</th>
+              <!-- <th class="text-center">Scan Masuk</th> -->
+              <th>Lokasi</th>
               <th class="text-center">Jam Pulang</th>
-              <th class="text-center">Scan Pulang</th>
-              <th class="text-center">Pulang Cepat</th>
-              <th>Durasi</th>
-              <th>Lembur</th>
-              <th>Status</th>
-              <th>Keterangan</th>
+              <!-- <th class="text-center">Scan Pulan</th> -->
+              <th class="text-center">Lokasi</th>
+              <!-- <th>Durasi</th> -->
+              <!-- <th>Lembur</th> -->
+              <!-- <th></th> -->  
+              <!-- <th></th> -->  
             </tr>
           </thead>
         <tbody>';
@@ -173,16 +192,16 @@ if (empty($_SESSION['SESSION_USER']) && empty($_SESSION['SESSION_ID'])) {
             if (date("l", mktime(0, 0, 0, $bulan, $d, $tahun)) == "Sunday") {
               if ($row_absen['time_in'] == '') {
                 echo '
-                <td class="text-center" colspan="3">Libur Akhir Pekan</td>';
+                <td class="text-center" colspan="2">Libur Akhir Pekan</td>';
               } else {
                 echo '
-                <td class="text-center">' . $row_absen['time_in'] . '</td>
+                <!-- <td class="text-center">' . $row_absen['time_in'] . '</td> -->
                 <td class="text-center">' . $row_absen['time_in'] . '</td>
               	<td class="text-center">' . $row_absen['selisih'] . '</td>';
               }
             } else {
               echo '
-              <td class="text-center">' . $shift_time_in . '</td>
+              <!-- <td class="text-center">' . $shift_time_in . '</td> -->
               <td class="text-center">' . $row_absen['time_in'] . '</td>
               <td class="text-center">' . $row_absen['selisih'] . '</td>';
             }
@@ -190,24 +209,25 @@ if (empty($_SESSION['SESSION_USER']) && empty($_SESSION['SESSION_ID'])) {
             if (date("l", mktime(0, 0, 0, $bulan, $d, $tahun)) == "Sunday") {
               if ($row_absen['time_out'] == '') {
                 echo '
-                <td class="text-center" colspan="3">Libur Akhir Pekan</td>';
+                <td class="text-center" colspan="2">Libur Akhir Pekan</td>';
               } else {
                 echo '
-                <td class="text-center">' . $row_shift['time_out'] . '</td>
+                <!-- <td class="text-center">' . $row_shift['time_out'] . '</td> -->
               	<td class="text-center">' . $row_absen['time_out'] . '</td>
               	<td class="text-center">' . $row_absen['selisih_out'] . '</td>';
               }
             } else {
               echo '
-              <td class="text-center">' . $row_shift['time_out'] . '</td>
+              <!-- <td class="text-center">' . $row_shift['time_out'] . '</td> -->
               <td class="text-center">' . $row_absen['time_out'] . '</td>
               <td class="text-center">' . $row_absen['selisih_out'] . '</td>';
             }
             echo '
-              <td>' . $durasi_kerja . '</td>
-              <td>' . $lembur . '</td>
+              
+              <!-- <td>' . $lembur . '</td> -->
+              <!-- <td>' . $row_absen['information'] . '</td> -->
               <td>' . $status . ' ' . $status_time_in . '</td>
-              <td>' . $row_absen['information'] . '</td>
+              <td>' . $durasi_kerja . '</td>
           </tr>';
           }
 
@@ -743,7 +763,7 @@ if (empty($_SESSION['SESSION_USER']) && empty($_SESSION['SESSION_ID'])) {
 <body>
 
 ';
-$list_month=["Januari","Februari","Maret","April","Mei","Juni","Juli","Agustus","September","Oktober","November","Desember"];
+
 echo '
     <section class="container_box">
       <div class="row">';
