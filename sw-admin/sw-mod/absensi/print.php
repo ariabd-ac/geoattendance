@@ -828,6 +828,11 @@ echo '
             $filter = "employees_id='$id' AND MONTH(presence_date) ='$month' AND employees_id='$id'";
           }
 
+          $libur_hari_besar=1;
+          
+          // libur sebulan ada 4 hari + libur hari besar
+          $libur= 4 + $libur_hari_besar;
+
           $query_hadir = "SELECT presence_id FROM presence WHERE $filter AND present_id='1' ORDER BY presence_id DESC";
           $hadir = $connection->query($query_hadir);
 
@@ -837,12 +842,41 @@ echo '
           $query_izin = "SELECT presence_id FROM presence WHERE $filter AND present_id='3' ORDER BY presence_id";
           $izin = $connection->query($query_izin);
 
-          $query_telat = "SELECT presence_id FROM presence WHERE $filter AND time_in>'$shift_time_in'";
+          $query_telat = "SELECT 
+                  P.presence_id,P.time_in,
+                  S.time_in AS shift_time_in 
+                  FROM presence P 
+                  LEFT JOIN shift S ON S.shift_id=P.shift_id
+                  WHERE $filter AND P.time_in>'$shift_time_in'";
           $telat = $connection->query($query_telat);
-          $kwk=1;
+          $kwk=0;
+          while($ro=$telat->fetch_assoc()){
+            $time_innya=$ro["time_in"];
+            $shift_time_in=$ro["shift_time_in"];
+
+            $diffTelat= strtotime($time_innya) - strtotime($shift_time_in);
+            // echo $time_innya;
+            // echo "<br/>time in ==> ".$time_innya;
+            // echo "<br/>shift ==> ".$shift_time_in;
+            // echo "<br/>difff ==> ".ceil($diffTelat / 60);
+
+            $jamSatuan=ceil($diffTelat);
+            $menitSatuan=ceil($diffTelat / 60);
+
+            $kwk=$menitSatuan;
+            
+          }
+          
+
+          // foreach ($telat as $value) {
+          //   $queyShift="SELECT * FROM"
+          // }
           $queryWFH= "SELECT presence_id FROM presence WHERE $filter AND shift_id=6";
           $wfh=$connection->query($queryWFH)->num_rows;
-          $alpha=$jumlahhari - $hadir->num_rows;
+
+          
+
+          $alpha=$jumlahhari - $hadir->num_rows - $libur;
 
           $query_dinas_luar="SELECT cuty_id FROM cuty WHERE employees_id='$id' AND MONTH(cuty_start) ='$month' AND jenis_cuty='dl'";
           $dinas_luar=$connection->query($query_dinas_luar)->num_rows;
@@ -858,16 +892,14 @@ echo '
           $tidak_absen_masuk=$connection->query($qery_tidak_absen_masuk)->num_rows;
           
           
-          $query_tidak_absen_keluar = "SELECT presence_id FROM presence WHERE $filter AND time_in>'$shift_time_out'";
+          $query_tidak_absen_keluar = "SELECT presence_id FROM presence WHERE $filter AND time_out = '00:00:00'";
           $tidak_absen_keluar=$connection->query($query_tidak_absen_keluar)->num_rows;
 
           $query_pulang_cepat = "SELECT presence_id FROM presence WHERE $filter AND time_out<'$shift_time_out'";
           
           $pulang_cepat=$connection->query($query_pulang_cepat)->num_rows;
           
-          $libur_hari_besar=1;
           
-          $libur=1;
           
           // echo '<p>Hadir : <span class="label label-success">' . $hadir->num_rows . '</span></p>
           // <p>Telat : <span class="label label-danger">' . $telat->num_rows . '</span></p>
