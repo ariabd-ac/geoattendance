@@ -4,7 +4,7 @@ require_once '../../../sw-library/sw-config.php';
 require_once '../../../sw-library/sw-function.php';
 include_once '../../../sw-library/vendor/autoload.php';
 
-$list_month=["Januari","Februari","Maret","April","Mei","Juni","Juli","Agustus","September","Oktober","November","Desember"];
+$list_month = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
 
 
 if (empty($_SESSION['SESSION_USER']) && empty($_SESSION['SESSION_ID'])) {
@@ -65,13 +65,13 @@ if (empty($_SESSION['SESSION_USER']) && empty($_SESSION['SESSION_ID'])) {
       <div class="row">';
           if (isset($_GET['from']) or isset($_GET['to'])) {
             // echo '<img src="../../../sw-content/kop.PNG">';
-            echo '<h3 class="text-center">SMK NEGERI 1 KALIWUNGU<br>REKAP PERSONAL '. $row['employees_name'].'<br>BULAN ' . $list_month[$_GET['from'] - 1] . ' TAHUN ' . $_GET['to'] . '</h3>';
+            echo '<h3 class="text-center">SMK NEGERI 1 KALIWUNGU<br>REKAP PERSONAL ' . $row['employees_name'] . '<br>BULAN ' . $list_month[$_GET['from'] - 1] . ' TAHUN ' . $_GET['to'] . '</h3>';
           } else {
             echo '<h3 class="text-center">LAPORAN DETAIL BULAN<br>' . tanggal_indo($month) . ' - ' . $year . '</h3>';
           }
-          $today=date('');
+          $today = date('');
           echo '
-        <p>Tanggal : '.date('d').' '.$list_month[date('n') - 1].' '.date('Y').' / Pukul : '.date('H').':'.date('i').'</p>
+        <p>Tanggal : ' . date('d') . ' ' . $list_month[date('n') - 1] . ' ' . date('Y') . ' / Pukul : ' . date('H') . ':' . date('i') . '</p>
         <!-- <p>Jabatan : ' . $row['position_name'] . '</p><br> -->
       <div class="content_box">
         <table class="customTable">
@@ -174,6 +174,19 @@ if (empty($_SESSION['SESSION_USER']) && empty($_SESSION['SESSION_ID'])) {
             $durasi_detik     = $diff % 60;
             $durasi_kerja     = '' . $durasi_jam . ' jam, ' . floor($durasi_menit / 60) . ' menit';
 
+
+            $query_absen22 = "SELECT presence_id,presence_date,time_in,time_out,picture_in,picture_out,present_id, latitude_longtitude_in,latitude_longtitude_out,information,TIMEDIFF(TIME(time_in),'$shift_time_in') AS selisih,if (time_in>'$shift_time_in','Telat',if(time_in='00:00:00','Tidak Masuk','Tepat Waktu')) AS status, TIMEDIFF(TIME(time_out),'$shift_time_out') AS selisih_out FROM presence WHERE $filter ORDER BY presence_id DESC";
+            $result_absen22 = $connection->query($query_absen22);
+            $row_absen22 = $result_absen22->fetch_assoc();
+            list($latitude,  $longitude) = explode(',', $row_absen['latitude_longtitude_in']);
+            list($latitude_out,  $longitude_out) = explode(',', $row_absen22['latitude_longtitude_out']);
+            // var_dump($row_absen22);
+            // die;
+
+
+
+
+
             // JAM LEMBUR =========================================
             if ($row_absen['time_out'] > $shift_time_out) {
               $lembur_kerja_start = strtotime('' . $date_month_year . ' ' . $shift_time_out . '');
@@ -185,10 +198,12 @@ if (empty($_SESSION['SESSION_USER']) && empty($_SESSION['SESSION_ID'])) {
             } else {
               $lembur = '';
             }
+
             echo '
-         <tr style="background:' . $background . ';color:' . $warna . '">
-            <td class="text-center">' . $d . '</td>
-            <td>' . format_hari_tanggal($date_month_year) . '</td>';
+          <tr style="background:' . $background . ';color:' . $warna . '">
+                  <td class="text-center">' . $d . '</td>
+                  <td>' . format_hari_tanggal($date_month_year)  . '</td>';
+
             if (date("l", mktime(0, 0, 0, $bulan, $d, $tahun)) == "Sunday") {
               if ($row_absen['time_in'] == '') {
                 echo '
@@ -203,7 +218,8 @@ if (empty($_SESSION['SESSION_USER']) && empty($_SESSION['SESSION_ID'])) {
               echo '
               <!-- <td class="text-center">' . $shift_time_in . '</td> -->
               <td class="text-center">' . $row_absen['time_in'] . '</td>
-              <td class="text-center">' . $row_absen['selisih'] . '</td>';
+              <td class="text-center">'  . '<a href="https://maps.google.com?q=' . $latitude . ',' . $longitude . '" target="_blank">Lihat Lokasi</a>'  .  '</td>';
+              // <td class="text-center">' . $latitude . '<br/>'  . $longitude . '</td>';
             }
 
             if (date("l", mktime(0, 0, 0, $bulan, $d, $tahun)) == "Sunday") {
@@ -214,20 +230,33 @@ if (empty($_SESSION['SESSION_USER']) && empty($_SESSION['SESSION_ID'])) {
                 echo '
                 <!-- <td class="text-center">' . $row_shift['time_out'] . '</td> -->
               	<td class="text-center">' . $row_absen['time_out'] . '</td>
-              	<td class="text-center">' . $row_absen['selisih_out'] . '</td>';
+              	<td class="text-center">' . $row_absen['selisih_out']  . '</td>';
               }
             } else {
               echo '
               <!-- <td class="text-center">' . $row_shift['time_out'] . '</td> -->
               <td class="text-center">' . $row_absen['time_out'] . '</td>
-              <td class="text-center">' . $row_absen['selisih_out'] . '</td>';
+              <td class="text-center">' . '<a href="https://maps.google.com?q=' . $latitude_out . ',' . $longitude_out . '" target="_blank">Lihat Lokasi</a>' . '</td>';
+              // <td class="text-center">' . $latitude_out . '<br/>'  . $longitude_out . '</td>';
+            }
+
+
+            echo '
+                  <td>' . $status . ' ' . $status_time_in . '</td>
+            ';
+
+
+            if ($row_absen['selisih'] < '00:00:00') {
+              echo '
+                      <td>' . '' . '</td>';
+            } else {
+              echo '
+                      <td>' . $row_absen['selisih'] . '</td>';
             }
             echo '
-              
               <!-- <td>' . $lembur . '</td> -->
               <!-- <td>' . $row_absen['information'] . '</td> -->
-              <td>' . $status . ' ' . $status_time_in . '</td>
-              <td>' . $durasi_kerja . '</td>
+              <!-- <td>' . $status . ' ' . $status_time_in . '</td> -->
           </tr>';
           }
 
@@ -610,15 +639,13 @@ if (empty($_SESSION['SESSION_USER']) && empty($_SESSION['SESSION_ID'])) {
               $status = 'Libur Akhir Pekan';
             }
             $date_month_year = '' . $year . '-' . $bulan . '-' . $d . '';
-            
+
             if (isset($_GET['from']) or isset($_GET['to'])) {
               $month = $_GET['from'];
               $year  = $_GET['to'];
               $filter = "employees_id='$id' AND presence_date='$date_month_year' AND MONTH(presence_date)='$month' AND year(presence_date)='$year'";
-            
             } else {
               $filter = "employees_id='$id' AND presence_date='$date_month_year' AND MONTH(presence_date) ='$month'";
-             
             }
             // $filter_cuty= "employees_id='$id' AND (MONTH(cuty_start) ='$month' OR (MONTH(cuty_end)='$month'))";
 
@@ -694,10 +721,8 @@ if (empty($_SESSION['SESSION_USER']) && empty($_SESSION['SESSION_ID'])) {
             $month = $_GET['from'];
             $year  = $_GET['to'];
             $filter = "employees_id='$id' AND MONTH(presence_date)='$month' AND year(presence_date)='$year' AND employees_id='$id'";
-            
           } else {
             $filter = "employees_id='$id' AND MONTH(presence_date) ='$month' AND employees_id='$id'";
-            
           }
 
           $query_hadir = "SELECT presence_id FROM presence WHERE $filter AND present_id='1' ORDER BY presence_id DESC";
@@ -764,17 +789,17 @@ if (empty($_SESSION['SESSION_USER']) && empty($_SESSION['SESSION_ID'])) {
 
 ';
 
-echo '
+        echo '
     <section class="container_box">
       <div class="row">';
-          echo '<h3 style="text-align:center;">REKAPITULASI PRESENSI GURU DAN KARYAWAN SMK N 1 KALIWUNGU</h3>'; 
-          if (isset($_GET['from']) or isset($_GET['to'])) {
+        echo '<h3 style="text-align:center;">REKAPITULASI PRESENSI GURU DAN KARYAWAN SMK N 1 KALIWUNGU</h3>';
+        if (isset($_GET['from']) or isset($_GET['to'])) {
 
-            echo '<h3 style="text-align:center;">BULAN ' . $list_month[$_GET['from']-1] . ' TAHUN ' . $_GET['to'] . '</h3>';
-          } else {
-            echo '<h3 style="text-align:center;">BULAN ' . tanggal_indo($month) . ' TAHUN ' . $year . '</h3>';
-          }
-          echo '
+          echo '<h3 style="text-align:center;">BULAN ' . $list_month[$_GET['from'] - 1] . ' TAHUN ' . $_GET['to'] . '</h3>';
+        } else {
+          echo '<h3 style="text-align:center;">BULAN ' . tanggal_indo($month) . ' TAHUN ' . $year . '</h3>';
+        }
+        echo '
       <div class="content_box">
         <table class="customTable">
           <thead>
@@ -799,7 +824,7 @@ echo '
             </tr>
           </thead>
         <tbody>';
-        $no=0;
+        $no = 0;
         while ($row = $result->fetch_assoc()) {
           $no++;
           $employees_name = $row['employees_name'];
@@ -828,10 +853,10 @@ echo '
             $filter = "employees_id='$id' AND MONTH(presence_date) ='$month' AND employees_id='$id'";
           }
 
-          $libur_hari_besar=1;
-          
+          $libur_hari_besar = 1;
+
           // libur sebulan ada 4 hari + libur hari besar
-          $libur= 4 + $libur_hari_besar;
+          $libur = 4 + $libur_hari_besar;
 
           $query_hadir = "SELECT presence_id FROM presence WHERE $filter AND present_id='1' ORDER BY presence_id DESC";
           $hadir = $connection->query($query_hadir);
@@ -849,58 +874,57 @@ echo '
                   LEFT JOIN shift S ON S.shift_id=P.shift_id
                   WHERE $filter AND P.time_in>'$shift_time_in'";
           $telat = $connection->query($query_telat);
-          $kwk=0;
-          while($ro=$telat->fetch_assoc()){
-            $time_innya=$ro["time_in"];
-            $shift_time_in=$ro["shift_time_in"];
+          $kwk = 0;
+          while ($ro = $telat->fetch_assoc()) {
+            $time_innya = $ro["time_in"];
+            $shift_time_in = $ro["shift_time_in"];
 
-            $diffTelat= strtotime($time_innya) - strtotime($shift_time_in);
+            $diffTelat = strtotime($time_innya) - strtotime($shift_time_in);
             // echo $time_innya;
-            // echo "<br/>time in ==> ".$time_innya;
-            // echo "<br/>shift ==> ".$shift_time_in;
-            // echo "<br/>difff ==> ".ceil($diffTelat / 60);
+            // echo "<br/>time in ==> " . $time_innya;
+            // echo "<br/>shift ==> " . $shift_time_in;
+            // echo "<br/>difff ==> " . ceil($diffTelat / 60);
 
-            $jamSatuan=ceil($diffTelat);
-            $menitSatuan=ceil($diffTelat / 60);
+            $jamSatuan = ceil($diffTelat);
+            $menitSatuan = ceil($diffTelat / 60);
 
-            $kwk=$menitSatuan;
-            
+            $kwk = $menitSatuan;
           }
-          
+
 
           // foreach ($telat as $value) {
           //   $queyShift="SELECT * FROM"
           // }
-          $queryWFH= "SELECT presence_id FROM presence WHERE $filter AND shift_id=6";
-          $wfh=$connection->query($queryWFH)->num_rows;
+          $queryWFH = "SELECT presence_id FROM presence WHERE $filter AND shift_id=6";
+          $wfh = $connection->query($queryWFH)->num_rows;
 
-          
 
-          $alpha=$jumlahhari - $hadir->num_rows - $libur;
 
-          $query_dinas_luar="SELECT cuty_id FROM cuty WHERE employees_id='$id' AND MONTH(cuty_start) ='$month' AND jenis_cuty='dl'";
-          $dinas_luar=$connection->query($query_dinas_luar)->num_rows;
+          $alpha = $jumlahhari - $hadir->num_rows - $libur;
 
-          $query_diklat="SELECT cuty_id FROM cuty WHERE employees_id='$id' AND MONTH(cuty_start) ='$month' AND jenis_cuty='dk'";
+          $query_dinas_luar = "SELECT cuty_id FROM cuty WHERE employees_id='$id' AND MONTH(cuty_start) ='$month' AND jenis_cuty='dl'";
+          $dinas_luar = $connection->query($query_dinas_luar)->num_rows;
 
-          $diklat=$connection->query($query_diklat)->num_rows;
+          $query_diklat = "SELECT cuty_id FROM cuty WHERE employees_id='$id' AND MONTH(cuty_start) ='$month' AND jenis_cuty='dk'";
 
-          $query_alasan_penting="SELECT cuty_id FROM cuty WHERE employees_id='$id' AND MONTH(cuty_start) ='$month' AND jenis_cuty='car'";
-          $cuti_alasan_penting=$connection->query($query_alasan_penting)->num_rows;
-          
+          $diklat = $connection->query($query_diklat)->num_rows;
+
+          $query_alasan_penting = "SELECT cuty_id FROM cuty WHERE employees_id='$id' AND MONTH(cuty_start) ='$month' AND jenis_cuty='car'";
+          $cuti_alasan_penting = $connection->query($query_alasan_penting)->num_rows;
+
           $qery_tidak_absen_masuk = "SELECT presence_id FROM presence WHERE $filter AND time_in='00:00:00' AND time_out <> '00:00:00'";
-          $tidak_absen_masuk=$connection->query($qery_tidak_absen_masuk)->num_rows;
-          
-          
+          $tidak_absen_masuk = $connection->query($qery_tidak_absen_masuk)->num_rows;
+
+
           $query_tidak_absen_keluar = "SELECT presence_id FROM presence WHERE $filter AND time_out = '00:00:00'";
-          $tidak_absen_keluar=$connection->query($query_tidak_absen_keluar)->num_rows;
+          $tidak_absen_keluar = $connection->query($query_tidak_absen_keluar)->num_rows;
 
           $query_pulang_cepat = "SELECT presence_id FROM presence WHERE $filter AND time_out<'$shift_time_out'";
-          
-          $pulang_cepat=$connection->query($query_pulang_cepat)->num_rows;
-          
-          
-          
+
+          $pulang_cepat = $connection->query($query_pulang_cepat)->num_rows;
+
+
+
           // echo '<p>Hadir : <span class="label label-success">' . $hadir->num_rows . '</span></p>
           // <p>Telat : <span class="label label-danger">' . $telat->num_rows . '</span></p>
           // <p>Sakit : <span class="label label-warning">' . $sakit->num_rows . '</span></p>
@@ -908,27 +932,25 @@ echo '
           // start tbody
           echo '
             <tr>
-              <td class="text-center">'.$no.'</td>
-              <td nowrap>'.$employees_name.'</td>
-              <td class="text-center">'.$kwk.'</td>
-              <td class="text-center">'.$hadir->num_rows.'</td>
-              <td class="text-center">'.$wfh.'</td>
-              <td class="text-center">'.$alpha.'</td>
-              <td class="text-center">'.$izin->num_rows.'</td>
-              <td class="text-center">'.$sakit->num_rows.'</td>
-              <td class="text-center">'.$dinas_luar.'</td>
-              <td class="text-center">'.$diklat.'</td>
-              <td class="text-center">'.$cuti_alasan_penting.'</td>
-              <td class="text-center">'.$tidak_absen_masuk.'</td>
-              <td class="text-center">'.$tidak_absen_keluar.'</td>
-              <td class="text-center">'.$telat->num_rows.'</td>
-              <td class="text-center">'.$pulang_cepat.'</td>
-              <td class="text-center">'.$libur_hari_besar.'</td>
-              <td class="text-center">'.$libur.'</td>
+              <td class="text-center">' . $no . '</td>
+              <td nowrap>' . $employees_name . '</td>
+              <td class="text-center">' . $kwk . '</td>
+              <td class="text-center">' . $hadir->num_rows . '</td>
+              <td class="text-center">' . $wfh . '</td>
+              <td class="text-center">' . $alpha . '</td>
+              <td class="text-center">' . $izin->num_rows . '</td>
+              <td class="text-center">' . $sakit->num_rows . '</td>
+              <td class="text-center">' . $dinas_luar . '</td>
+              <td class="text-center">' . $diklat . '</td>
+              <td class="text-center">' . $cuti_alasan_penting . '</td>
+              <td class="text-center">' . $tidak_absen_masuk . '</td>
+              <td class="text-center">' . $tidak_absen_keluar . '</td>
+              <td class="text-center">' . $telat->num_rows . '</td>
+              <td class="text-center">' . $pulang_cepat . '</td>
+              <td class="text-center">' . $libur_hari_besar . '</td>
+              <td class="text-center">' . $libur . '</td>
             </tr>
           ';
-
-          
         }
         echo '<tbody>
       </table>

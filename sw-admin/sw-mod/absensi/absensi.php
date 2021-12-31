@@ -313,7 +313,7 @@ if (empty($connection)) {
                   <ul class="dropdown-menu" role="menu">
                     <li><a href="#" class="btn-print" data-id="pdf">PDF</a></li>
                     <!-- <li><a href="#" class="btn-print" data-id="excel">EXCEL</a></li> -->
-                    <li><a href="#" class="btn-print" data-id="print">PRINT</a></li>
+                    <!-- <li><a href="#" class="btn-print" data-id="print">PRINT</a></li> -->
                   </ul>
             </div>
           </div>
