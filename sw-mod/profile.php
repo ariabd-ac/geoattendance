@@ -75,24 +75,26 @@ if ($mod == '') {
                                 </select>
                             </div>
                         </div>
-
-                        <div class="form-group boxed">
-                            <div class="input-wrapper">
-                                <label class="label" for="select4">Jam Kerja</label>
-                                <select class="form-control custom-select" name="shift_id">';
-        $query = "SELECT shift_id,shift_name from shift order by shift_name ASC";
-        $result = $connection->query($query);
-        while ($rowa = $result->fetch_assoc()) {
-            if ($rowa['shift_id'] == $row_user['shift_id']) {
-                echo '<option value="' . $rowa['shift_id'] . '" selected>' . $rowa['shift_name'] . '</option>';
-            } else {
-                echo '<option value="' . $rowa['shift_id'] . '">' . $rowa['shift_name'] . '</option>';
-            }
-        }
+                        <!-- update 05 Januari 2022, menghilangkan jam kerja -->
+                        <!--        <div class="form-group boxed"> -->
+                        <!--    <div class="input-wrapper"> -->
+                        <!--      <label class="label" for="select4">Jam Kerja</label> -->
+                        <!--      <select class="form-control custom-select" name="shift_id"> -->
+                        
+                        ';
+        // $query = "SELECT shift_id,shift_name from shift order by shift_name ASC";
+        // $result = $connection->query($query);
+        // while ($rowa = $result->fetch_assoc()) {
+        //     if ($rowa['shift_id'] == $row_user['shift_id']) {
+        //         echo '<option value="' . $rowa['shift_id'] . '" selected>' . $rowa['shift_name'] . '</option>';
+        //     } else {
+        //         echo '<option value="' . $rowa['shift_id'] . '">' . $rowa['shift_name'] . '</option>';
+        //     }
+        // }
         echo '
-                                </select>
-                            </div>
-                        </div>
+                        <!--   </select> -->
+                        <!-- </div> -->
+                        <!-- </div> -->
 
 
                         <div class="form-group boxed">

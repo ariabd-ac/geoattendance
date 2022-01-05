@@ -91,7 +91,7 @@ if (empty($_SESSION['SESSION_USER']) && empty($_SESSION['SESSION_ID'])) {
           $warna      = '';
           $background = '';
           $status_hadir     = 'Tidak Hadir';
-          if (date("l", mktime(0, 0, 0, $bulan, $d, $tahun)) == "Sunday") {
+          if (date("l", mktime(0, 0, 0, $bulan, $d, $tahun)) == "Sunday" || date("l", mktime(0, 0, 0, $bulan, $d, $tahun)) == "Saturday") {
             $warna = '#ffffff';
             $background = '#FF0000';
             $status_hadir = 'Libur Akhir Pekan';
@@ -136,13 +136,14 @@ if (empty($_SESSION['SESSION_USER']) && empty($_SESSION['SESSION_ID'])) {
           $result_absen = $connection->query($query_absen);
           $row_absen = $result_absen->fetch_assoc();
           $lat_long_presence_outs = $row_absen['latitude_longtitude_out'];
+
           // Status Kehadiran
           $querya = "SELECT present_id,present_name FROM present_status WHERE present_id='$row_absen[present_id]'";
           $resulta = $connection->query($querya);
           $rowa =  $resulta->fetch_assoc();
           // Status Kehadiran
           if ($row_absen['time_in'] == NULL) {
-            if (date("l", mktime(0, 0, 0, $bulan, $d, $tahun)) == "Sunday") {
+            if (date("l", mktime(0, 0, 0, $bulan, $d, $tahun)) == "Sunday" || date("l", mktime(0, 0, 0, $bulan, $d, $tahun)) == "Saturday") {
               $status_hadir = 'Libur Akhir Pekan';
             } else {
               $status_hadir = '<span class="label label-danger">Tidak Hadir</span>';
@@ -197,6 +198,8 @@ if (empty($_SESSION['SESSION_USER']) && empty($_SESSION['SESSION_ID'])) {
           } else {
             $resultDistance_out2 = distHaversine("$lat_long_presence_outs", $officeLatLong);
           }
+          // var_dump($resultDistance_out2);
+          // die;
 
 
           // calculating a distance

@@ -235,7 +235,7 @@ switch (@$_GET['action']) {
 
     // ------------- Absen -------------*/
   case 'absent':
-    $type=$_GET['type'];
+    $type = $_GET['type'];
 
     $error = array();
     $files        = $_FILES["webcam"]["name"];
@@ -306,7 +306,7 @@ switch (@$_GET['action']) {
               $filename = '' . $date . '-in-' . time() . '-' . $row_user['id'] . '.jpeg';
               $directory = "../sw-content/absent/" . $filename;
               /* -------- Upload Foto Masuk -------*/
-              if($type == "masuk"){
+              if ($type == "masuk") {
                 $add = "INSERT INTO presence (employees_id,
                                 presence_date,
                                 time_in,
@@ -327,7 +327,7 @@ switch (@$_GET['action']) {
                                 '',
                                 '',
                                 '$row_u[shift_id]')";
-              }else{
+              } else {
                 $add = "INSERT INTO presence (employees_id,
                           presence_date,
                           time_in,
@@ -354,7 +354,7 @@ switch (@$_GET['action']) {
                 die($connection->error . __LINE__);
                 echo 'Sepertinya Sistem Kami sedang error!';
               } else {
-                echo 'success/Selamat Anda berhasil Absen '.ucfirst($type).' pada Tanggal ' . tanggal_ind($date) . ' dan Jam : ' . $time . ', Semangat bekerja "' . $row_u['employees_name'] . '" !';
+                echo 'success/Selamat Anda berhasil Absen ' . ucfirst($type) . ' pada Tanggal ' . tanggal_ind($date) . ' dan Jam : ' . $time . ', Semangat bekerja "' . $row_u['employees_name'] . '" !';
                 imagejpeg($tmp_name, $directory, 80);
               }
             }
@@ -528,7 +528,7 @@ switch (@$_GET['action']) {
             <th scope="col" class="align-middle">Absen Pulang</th>
             <th scope="col" class="align-middle hidden-sm">Status</th>
             <th scope="col" class="align-middle hidden-sm">File Upload</th>
-            <th scope="col" class="align-middle">Aksi</th>
+          <!--  <th scope="col" class="align-middle">Aksi</th> -->
         </tr>
     </thead>
     <tbody>';
@@ -586,9 +586,9 @@ switch (@$_GET['action']) {
             <td class="hidden-sm">' . $row_aa['present_name'] . '' . $information . '</td>
             <td><a class="image-link" href="./sw-content/fileupload/' . $row_absen['fileupload'] . '">
             <span class="badge badge-success">' . $row_absen['fileupload'] . '</span></a></td>
-            <td class="text-center">
+           <!-- <td class="text-center">
               <button type="button" class="btn btn-success btn-sm modal-update" data-id="' . $row_absen['presence_id'] . '" data-masuk="' . $row_absen['time_in'] . '" data-pulang="' . $row_absen['time_out'] . '" data-date="' . tgl_indo($row_absen['presence_date']) . '" data-information="' . $row_absen['information'] . '" data-status="' . $row_absen['present_id'] . '" data-toggle="modal" data-target="#modal-show"><i class="fas fa-pencil-alt"></i></button>
-            </td>
+            </td> -->
         </tr>';
       }
     }
