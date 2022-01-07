@@ -348,7 +348,7 @@ if (empty($_SESSION['SESSION_USER']) && empty($_SESSION['SESSION_ID'])) {
           <p>Sakit : <span class="label label-warning">' . $sakit->num_rows . '</span></p>
           <p>Izin : <span class="label label-info">' . $izin->num_rows . '</span></p>
 
-          <p style="margin-top:30px;text-align:right;">Tanggal ' . tgl_indo($date) . '</p>
+          <p style="margin-top:30px;text-align:right;">Semarang ' . tgl_indo($date) . '</p>
           
           
           
@@ -669,7 +669,7 @@ if (empty($_SESSION['SESSION_USER']) && empty($_SESSION['SESSION_ID'])) {
           <p>Telat : <span class="label label-danger">' . $telat->num_rows . '</span></p>
           <p>Sakit : <span class="label label-warning">' . $sakit->num_rows . '</span></p>
           <p>Izin : <span class="label label-info">' . $izin->num_rows . '</span></p>
-          <p style="margin-top:30px;text-align:right;">Tanggal ' . tgl_indo($date) . '</p>
+          <p style="margin-top:30px;text-align:right;">Semarang ' . tgl_indo($date) . '</p>
           
           <br/>
           <br/>
@@ -1082,6 +1082,13 @@ if (empty($_SESSION['SESSION_USER']) && empty($_SESSION['SESSION_ID'])) {
         }
         echo '<tbody>
       </table>
+
+          <p style="margin-top:30px;text-align:right;">Semarang ' . tgl_indo($date) . '</p>
+          
+          <br/>
+          <br/>
+          
+          <p style="margin-top:50px;text-align:right;"> ' . $site_director . '</p>
          
 
       </div>
