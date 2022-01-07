@@ -373,7 +373,9 @@ if (empty($_SESSION['SESSION_USER']) && empty($_SESSION['SESSION_ID'])) {
       //Explore to Excel -------------------------------------------------------
       break;
     case 'excel':
-
+      // $tester = 'test';
+      // var_dump($tester);
+      // die;
       if (empty($_GET['id'])) {
         $error[] = 'ID tidak boleh kosong';
       } else {
@@ -401,14 +403,17 @@ if (empty($_SESSION['SESSION_USER']) && empty($_SESSION['SESSION_ID'])) {
           $mpdf = new \Mpdf\Mpdf();
           ob_start();
 
+          // die(var_dump($employees_name));
+
           if (empty($_GET['print'])) {
             header("Content-type: application/vnd-ms-excel");
-            header("Content-Disposition: attachment; filename=Data-Absensi-$employees_name-$date.xls");
+            header("Content-Disposition: attachment; filename=Data-Absensi-$date.xls");
           } else {
             echo '<script>
-      window.print();
-    </script>';
+                    window.print();
+                  </script>';
           }
+
 
 
           echo '<!DOCTYPE html>
