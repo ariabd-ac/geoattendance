@@ -15,12 +15,12 @@ if (empty($_SESSION['SESSION_USER']) && empty($_SESSION['SESSION_ID'])) {
             backup($connection, $DB_NAME);
             break;
         case 'restore':
-            $response=array(
-                "type"=>"",
+            $response = array(
+                "type" => "",
                 "message" => ""
             );
             if (!empty($_FILES)) {
-                
+
                 // Validating SQL file type by extensions
                 if (!in_array(strtolower(pathinfo($_FILES["file"]["name"], PATHINFO_EXTENSION)), array(
                     "sql"
@@ -33,13 +33,14 @@ if (empty($_SESSION['SESSION_USER']) && empty($_SESSION['SESSION_ID'])) {
 
                     if (is_uploaded_file($_FILES["file"]["tmp_name"])) {
                         $move = move_uploaded_file($_FILES["file"]["tmp_name"], $_FILES["file"]["name"]);
-                        
-                        $response=restoreMysqlDB($_FILES["file"]["name"], $connection);
+
+                        $response = restoreMysqlDB($_FILES["file"]["name"], $connection);
                     }
                 }
             }
             echo $response['message'];
-            die;
+            $_SESSION['flash'] = $response;
+            header('Location: ' . $_SERVER['HTTP_REFERER']);
             break;
     }
 }
@@ -109,49 +110,49 @@ function backup($conn, $database_name)
         flush();
         readfile($backup_file_name);
         exec('rm ' . $backup_file_name);
-    } 
+    }
 }
 
 function restoreMysqlDB($filePath, $conn)
-    {
-       
-        $sql = '';
-        $error = '';
+{
 
-        if (file_exists($filePath)) {
-            $lines = file($filePath);
-            
-            foreach ($lines as $line) {
+    $sql = '';
+    $error = '';
 
-                // Ignoring comments from the SQL script
-                if (substr($line, 0, 2) == '--' || $line == '') {
-                    continue;
-                }
+    if (file_exists($filePath)) {
+        $lines = file($filePath);
 
-                $sql .= $line;
+        foreach ($lines as $line) {
 
-                if (substr(trim($line), -1, 1) == ';') {
-
-                    $result = mysqli_query($conn, $sql);
-                    if (!$result) {
-                        $error .= mysqli_error($conn) . "\n";
-                    }
-                    $sql = '';
-                }
-            } // end foreach
-
-            if ($error) {
-                $response = array(
-                    "type" => "error",
-                    "message" => $error
-                );
-            } else {
-                $response = array(
-                    "type" => "success",
-                    "message" => "Database Restore Completed Successfully."
-                );
+            // Ignoring comments from the SQL script
+            if (substr($line, 0, 2) == '--' || $line == '') {
+                continue;
             }
+
+            $sql .= $line;
+
+            if (substr(trim($line), -1, 1) == ';') {
+
+                $result = mysqli_query($conn, $sql);
+                if (!$result) {
+                    $error .= mysqli_error($conn) . "\n";
+                }
+                $sql = '';
+            }
+        } // end foreach
+
+        if ($error) {
+            $response = array(
+                "type" => "error",
+                "message" => $error
+            );
+        } else {
+            $response = array(
+                "type" => "success",
+                "message" => "Database Restore Completed Successfully."
+            );
         }
-        // end if file exists
-        return $response;
     }
+    // end if file exists
+    return $response;
+}
