@@ -22,10 +22,16 @@ if (empty($connection)) {
                     <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                         <div class="box box-solid d-flex justify-content-center align-items-center">
                             <div class="d-flex justify-content-center">
-                                <button type="button" class="btn btn-success"><i class="fa fa-download"></i> Backup Data</button>
-                                <button type="button" class="btn btn-primary"><i class="fa fa-upload"></i> Restore Data</button>
-                            </div>
-                            
+                            <form method="POST" action="sw-mod/restore/proses.php">
+                                <input type="hidden" value="backup" name="action">
+                                <button type="submit" value="backup" class="btn btn-success"><i class="fa fa-download"></i> Backup Data</button>
+                            </form>
+                            <form method="POST" action="sw-mod/restore/proses.php" enctype="multipart/form-data">
+                                <input type="hidden" value="restore" name="action">
+                                <input class="form-control" type="file" name="file">
+                                <button type="submit" class="btn btn-primary"><i class="fa fa-upload"></i> Restore Data</button>
+                            </form>
+                            </div> 
                         </div>
                     </div>
                 </div>
