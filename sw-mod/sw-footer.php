@@ -79,9 +79,12 @@
 <script src="' . $base_url . '/sw-mod/sw-assets/js/sw-script.js"></script>';
     if ($mod == 'absent') { ?>
         <script type="text/javascript">
-            var result;
+            var result,shiftId,distance;
             $(document).ready(function getLocation() {
                 result = document.getElementById("latitude");
+                distance = document.getElementById("distance");
+                shiftId = document.getElementById("shiftid").innerText;
+
                 // 
                 if (navigator.geolocation) {
                     navigator.geolocation.getCurrentPosition(successCallback, errorCallback);
@@ -95,9 +98,32 @@
                 }
             });
 
+            function rad(x)
+            {
+                return x * Math.PI / 180;
+            }
+
+            function distHaversine(coord_a, coord_b)
+            {
+                // jarak kilometer dimensi (mean radius) bumi
+                const R = 6371;
+                coord_a = coord_a.split(",");
+                coord_b = coord_b.split(",");
+                let dLat = rad((coord_b[0]) - (coord_a[0]));
+                let dLong = rad(coord_b[1] - coord_a[1]);
+                let a = Math.sin(dLat / 2) * Math.sin(dLat / 2) + Math.cos(rad(coord_a[0])) * Math.cos(rad(coord_b[0])) * Math.sin(dLong / 2) * Math.sin(dLong / 2);
+                let c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+                let d = R * c;
+                // hasil akhir dalam satuan kilometer
+                return d;
+            }
+
             // Define callback function for successful attempt
             function successCallback(position) {
                 result.innerHTML = "" + position.coords.latitude + "," + position.coords.longitude + "";
+                let res_distance = distHaversine( "" + position.coords.latitude + "," + position.coords.longitude + "" , '-7.463889, 110.615290');
+                distance.innerHTML = res_distance;
+
             }
 
             // Define callback function for failed attempt
