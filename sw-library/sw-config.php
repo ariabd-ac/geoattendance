@@ -5,12 +5,18 @@ $pacth_url	= 'http://' . $_SERVER["HTTP_HOST"] . $_SERVER["REQUEST_URI"] . '';
 // $DB_HOST 	= 'localhost';
 // $DB_USER 	= 'root'; // User Database
 // $DB_PASSWD  = ''; // Password Database
-// $DB_NAME 	= 'absensi_v3'; // Nama database
+// $DB_NAME 	= 'absensi_v3.1'; // Nama database
 
 $DB_HOST 	= 'localhost';
 $DB_USER 	= 'root'; // User Database
 $DB_PASSWD  = ''; // Password Database
 $DB_NAME 	= 'absensi_v3'; // Nama database
+
+// vps
+// $DB_HOST 	= 'localhost';
+// $DB_USER 	= 'root'; // User Database
+// $DB_PASSWD  = 'Server*123#'; // Password Database
+// $DB_NAME 	= 'absensi_v3'; // Nama database
 
 // -------------- Koneksi Database ------------
 @define("DB_HOST", $DB_HOST);
@@ -34,7 +40,7 @@ if (!function_exists('base_url')) {
 			$http = isset($_SERVER['HTTPS']) && strtolower($_SERVER['HTTPS']) !== 'off' ? 'https' : 'http';
 			$hostname = $_SERVER['HTTP_HOST'];
 			$dir = str_replace(basename($_SERVER['SCRIPT_NAME']), '', $_SERVER['SCRIPT_NAME']);
-			$core = preg_split('@/@', str_replace($_SERVER['DOCUMENT_ROOT'], '', realpath(dirname(__FILE__))), NULL, PREG_SPLIT_NO_EMPTY);
+			$core = preg_split('@/@', str_replace($SERVER['DOCUMENT_ROOT'], '', realpath(dirname(FILE_))), NULL, PREG_SPLIT_NO_EMPTY);
 			$core = $core[0];
 			$tmplt = $atRoot ? ($atCore ? "%s://%s/%s/" : "%s://%s/") : ($atCore ? "%s://%s/%s/" : "%s://%s%s");
 			$end = $atRoot ? ($atCore ? $core : $hostname) : ($atCore ? $core : $dir);

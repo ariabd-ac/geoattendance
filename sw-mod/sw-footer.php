@@ -160,14 +160,19 @@
             //shutter.autoplay = true;
             shutter.src = navigator.userAgent.match(/Firefox/) ? './sw-mod/sw-assets/js/webcamjs/shutter.ogg' : './sw-mod/sw-assets/js/webcamjs/shutter.mp3';
 
-            function captureimage() {
+            function captureimage(param1,action) {
                 var latitude = $('.latitude').html();
+                console.log(param1,"THIS")
+                console.log(action,"ACTION")
+
+                let actionTypeText= action == 1 ? "masuk" : "pulang";
+                
                 // play sound effect
                 shutter.play();
                 // take snapshot and get image data
                 Webcam.snap(function(data_uri) {
                     // display results in page
-                    Webcam.upload(data_uri, './sw-proses?action=absent&latitude=' + latitude + '',
+                    Webcam.upload(data_uri, './sw-proses?action=absent&type='+actionTypeText+'&latitude=' + latitude + '',
                         function(code, text) {
                             $data = '' + text + '';
                             var results = $data.split("/");

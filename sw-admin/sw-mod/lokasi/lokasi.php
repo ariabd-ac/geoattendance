@@ -1,14 +1,14 @@
 <?php
-if(empty($connection)){
+if (empty($connection)) {
   header('location:../../');
 } else {
   include_once 'sw-mod/sw-panel.php';
-  require_once'../sw-library/phpqrcode/qrlib.php'; 
-echo'
+  require_once '../sw-library/phpqrcode/qrlib.php';
+  echo '
   <div class="content-wrapper">';
-    switch(@$_GET['op']){ 
+  switch (@$_GET['op']) {
     default:
-echo'
+      echo '
 <section class="content-header">
   <h1>Data<small> Lokasi</small></h1>
     <ol class="breadcrumb">
@@ -16,7 +16,7 @@ echo'
       <li class="active">Data Lokasi</li>
     </ol>
 </section>';
-echo'
+      echo '
 <section class="content">
   <div class="row">
     <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
@@ -24,14 +24,14 @@ echo'
         <div class="box-header with-border">
           <h3 class="box-title"><b>Data Lokasi</b></h3>
           <div class="box-tools pull-right">';
-          if($level_user == 1){
-            echo'
-            <button type="button" class="btn btn-success btn-flat" data-toggle="modal" data-target="#modalAdd"><i class="fa fa-plus"></i> Tambah Baru</button>';}
-          else{
-            echo'
+      if ($level_user == 1) {
+        echo '
+            <button type="button" class="btn btn-success btn-flat" data-toggle="modal" data-target="#modalAdd"><i class="fa fa-plus"></i> Tambah Baru</button>';
+      } else {
+        echo '
             <button type="button" class="btn btn-success btn-flat access-failed"><i class="fa fa-plus"></i> Tambah Baru</button>';
-            }
-          echo'
+      }
+      echo '
           </div>
         </div>
             <div class="box-body">
@@ -42,43 +42,49 @@ echo'
                 <th style="width:20px" class="text-center">No</th>
                 <th>Nama Lokasi</th>
                 <th>Alamat</th>
+                <th>Lat</th>
+                <th>Long</th>
                 <th class="text-center">Jumlah Karyawan</th>
                 <th style="width:150px" class="text-center">Aksi</th>
               </tr>
               </thead>
               <tbody>';
-              $query="SELECT building_id,name,address FROM building order by building_id  DESC";
-              $result = $connection->query($query);
-              if($result->num_rows > 0){
-              $no=0;
-             while ($row= $result->fetch_assoc()) {
-              $employees_count ="SELECT id FROM employees WHERE building_id='$row[building_id]'";
-              $result_count = $connection->query($employees_count);
-                $no++;
-                echo'
+      $query = "SELECT building_id,name,address,lat_building,long_building FROM building order by building_id  DESC";
+      $result = $connection->query($query);
+      if ($result->num_rows > 0) {
+        $no = 0;
+        while ($row = $result->fetch_assoc()) {
+          $employees_count = "SELECT id FROM employees WHERE building_id='$row[building_id]'";
+          $result_count = $connection->query($employees_count);
+          $no++;
+          echo '
                 <tr>
-                  <td class="text-center">'.$no.'</td>
-                  <td>'.$row['name'].'</td>
-                  <td>'.$row['address'].'</td>
-                  <td class="text-center"><span class="badge bg-yellow">'.$result_count->num_rows.'</span></td>
+                  <td class="text-center">' . $no . '</td>
+                  <td>' . $row['name'] . '</td>
+                  <td>' . $row['address'] . '</td>
+                  <td>' . $row['lat_building'] . '</td>
+                  <td>' . $row['long_building'] . '</td>
+                  <td class="text-center"><span class="badge bg-yellow">' . $result_count->num_rows . '</span></td>
                   <td class="text-right">
                     <div class="btn-group">';
-                      if($level_user == 1){
-                      echo'
-                      <a href="#modalEdit" class="btn btn-warning btn-xs enable-tooltip" title="Edit" data-toggle="modal"';?> onclick="getElementById('txtid').value='<?PHP echo $row['building_id'];?>';getElementById('txtname').value='<?PHP echo $row['name'];?>';getElementById('txtaddress').value='<?PHP echo $row['address'];?>';"><i class="fa fa-pencil-square-o"></i> Ubah</a>
-                      <?php echo'
-                      <buton data-id="'.epm_encode($row['building_id']).'" class="btn btn-xs btn-danger delete" title="Hapus"><i class="fa fa-trash-o"></i> Hapus</button>';}
-                    else{
-                    echo'
+          if ($level_user == 1) {
+            echo '
+                      <a href="#modalEdit" class="btn btn-warning btn-xs enable-tooltip" title="Edit" data-toggle="modal"'; ?> onclick="getElementById('txtid').value='<?PHP echo $row['building_id']; ?>';getElementById('txtname').value='<?PHP echo $row['name']; ?>';getElementById('txtaddress').value='<?PHP echo $row['address']; ?>';getElementById('lat_building').value='<?PHP echo $row['lat_building']; ?>';getElementById('long_building').value='<?PHP echo $row['long_building']; ?>';"><i class="fa fa-pencil-square-o"></i> Ubah</a>
+  <?php echo '
+                      <buton data-id="' . epm_encode($row['building_id']) . '" class="btn btn-xs btn-danger delete" title="Hapus"><i class="fa fa-trash-o"></i> Hapus</button>';
+          } else {
+            echo '
                       <button type="button" class="btn btn-warning btn-xs access-failed enable-tooltip" title="Edit"><i class="fa fa-pencil-square-o"></i> Ubah</button>
                       <buton type="button" class="btn btn-xs btn-danger access-failed" title="Hapus"><i class="fa fa-trash-o"></i> Hapus</button>';
-                    }
-                    echo'
+          }
+          echo '
                     </div>
 
                   </td>
-                </tr>';}}
-              echo'
+                </tr>';
+        }
+      }
+      echo '
               </tbody>
             </table>
           </div>
@@ -107,6 +113,16 @@ echo'
         <div class="form-group">
             <label>Alamat Kantor</label>
             <textarea class="form-control address" name="address" rows="3" required></textarea>
+        </div>
+
+        <div class="form-group">
+          <label>Lat Sekolah</label>
+          <input type="text" class="form-control" name="lat_building" required>
+        </div>
+
+        <div class="form-group">
+          <label>Long Sekolah</label>
+          <input type="text" class="form-control" name="long_building" required>
         </div>
       </div>
 
@@ -139,7 +155,17 @@ echo'
           <div class="form-group">
             <label>Alamat Kantor</label>
             <textarea class="form-control address" id="txtaddress" name="address" rows="3" required></textarea>
-        </div>
+          </div>
+
+          <div class="form-group">
+            <label>Lat Sekolah</label>
+            <input type="text" class="form-control"  id="lat_building" name="lat_building" required>
+          </div>
+
+          <div class="form-group">
+            <label>Long Sekolah</label>
+            <input type="text" class="form-control" id="long_building" name="long_building" required>
+          </div>
       </div>
       <div class="modal-footer">
         <button type="submit" class="btn btn-primary pull-left"><i class="fa fa-check"></i> Simpan</button>
@@ -149,8 +175,8 @@ echo'
     </div>
   </div>
 </div>';
-break;
-}?>
+      break;
+  } ?>
 
-</div>
-<?php }?>
+  </div>
+<?php } ?>

@@ -3,6 +3,31 @@ error_reporting(0);
 require_once '../../../sw-library/sw-config.php';
 require_once '../../../sw-library/sw-function.php';
 include_once '../../../sw-library/vendor/autoload.php';
+
+$list_month = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
+
+function rad($x)
+{
+  return $x * M_PI / 180;
+}
+
+function distHaversine($coord_a, $coord_b)
+{
+  # jarak kilometer dimensi (mean radius) bumi
+  $R = 6371;
+  $coord_a = explode(",", $coord_a);
+  $coord_b = explode(",", $coord_b);
+  $dLat = rad(($coord_b[0]) - ($coord_a[0]));
+  $dLong = rad($coord_b[1] - $coord_a[1]);
+  $a = sin($dLat / 2) * sin($dLat / 2) + cos(rad($coord_a[0])) * cos(rad($coord_b[0])) * sin($dLong / 2) * sin($dLong / 2);
+  $c = 2 * atan2(sqrt($a), sqrt(1 - $a));
+  $d = $R * $c;
+  # hasil akhir dalam satuan kilometer
+  return number_format($d, 0, '.', ',');
+}
+// end function calculate distance
+
+
 if (empty($_SESSION['SESSION_USER']) && empty($_SESSION['SESSION_ID'])) {
   //Kondisi tidak login
   header('location:../login/');
@@ -61,29 +86,45 @@ if (empty($_SESSION['SESSION_USER']) && empty($_SESSION['SESSION_ID'])) {
       <div class="row">';
           if (isset($_GET['from']) or isset($_GET['to'])) {
             // echo '<img src="../../../sw-content/kop.PNG">';
-            echo '<h3 class="text-center">LAPORAN DETAIL HARIAN<br>PERIODE WAKTU ' . tanggal_indo($_GET['from']) . ' - ' . $_GET['to'] . '</h3>';
+            echo '<h3 class="text-center">SMK NEGERI 1 KALIWUNGU<br>REKAP PERSONAL ' . $row['employees_name'] . '<br>BULAN ' . $list_month[$_GET['from'] - 1] . ' TAHUN ' . $_GET['to'] . '</h3>';
           } else {
             echo '<h3 class="text-center">LAPORAN DETAIL BULAN<br>' . tanggal_indo($month) . ' - ' . $year . '</h3>';
           }
+          $today = date('');
           echo '
-        <p>Nama   : ' . $row['employees_name'] . '</p>
-        <p>Jabatan : ' . $row['position_name'] . '</p><br>
+        <p>Tanggal : ' . date('d') . ' ' . $list_month[date('n') - 1] . ' ' . date('Y') . ' / Pukul : ' . date('H') . ':' . date('i') . '</p>
+        <!-- <p>Jabatan : ' . $row['position_name'] . '</p><br> -->
       <div class="content_box">
         <table class="customTable">
           <thead>
             <tr>
-              <th class="text-center">No.</th>
-              <th>Tanggal</th>
+              <th class="text-center" rowspan="2">No.</th>
+              <th rowspan="2">Tanggal</th>
+              <!-- <th class="text-center">Jam Masuk</th> -->
+              <!-- <th class="text-center">Scan Masuk</th> -->
+              <th class="text-center" colspan="4">Absen</th>
+              <!-- <th class="text-center">Jam Pulang</th> -->
+              <!-- <th class="text-center">Scan Pulang</th> -->
+              <!-- <th class="text-center">Lokasi</th> -->
+              <!-- <th>Durasi</th> -->
+              <!-- <th>Lembur</th> -->
+              <th rowspan="2">Status</th>
+              <th rowspan="2">KWK</th>
+              <th rowspan="2">TTD</th>
+            </tr>
+            <tr>
+              <!-- <th class="text-center"></th>
+              <th></th> -->
               <th class="text-center">Jam Masuk</th>
-              <th class="text-center">Scan Masuk</th>
-              <th>Terlambat</th>
+              <!-- <th class="text-center">Scan Masuk</th> -->
+              <th>Lokasi</th>
               <th class="text-center">Jam Pulang</th>
-              <th class="text-center">Scan Pulang</th>
-              <th class="text-center">Pulang Cepat</th>
-              <th>Durasi</th>
-              <th>Lembur</th>
-              <th>Status</th>
-              <th>Keterangan</th>
+              <!-- <th class="text-center">Scan Pulan</th> -->
+              <th class="text-center">Lokasi</th>
+              <!-- <th>Durasi</th> -->
+              <!-- <th>Lembur</th> -->
+              <!-- <th></th> -->  
+              <!-- <th></th> -->  
             </tr>
           </thead>
         <tbody>';
@@ -91,7 +132,7 @@ if (empty($_SESSION['SESSION_USER']) && empty($_SESSION['SESSION_ID'])) {
             $warna      = '';
             $background = '';
             $status     = 'Tidak Hadir';
-            if (date("l", mktime(0, 0, 0, $bulan, $d, $tahun)) == "Sunday") {
+            if (date("l", mktime(0, 0, 0, $bulan, $d, $tahun)) == "Sunday" || date("l", mktime(0, 0, 0, $bulan, $d, $tahun)) == "Saturday") {
               $warna = 'white';
               $background = '#FF0000';
               $status = 'Libur Akhir Pekan';
@@ -124,7 +165,7 @@ if (empty($_SESSION['SESSION_USER']) && empty($_SESSION['SESSION_ID'])) {
             $rowa =  $resulta->fetch_assoc();
 
             if ($row_absen['time_in'] == NULL) {
-              if (date("l", mktime(0, 0, 0, $bulan, $d, $tahun)) == "Sunday") {
+              if (date("l", mktime(0, 0, 0, $bulan, $d, $tahun)) == "Sunday" || date("l", mktime(0, 0, 0, $bulan, $d, $tahun)) == "Saturday") {
                 $status = 'Libur Akhir Pekan';
               } else {
                 $status = '<span class="label label-danger">Tidak Hadir</span>';
@@ -155,6 +196,54 @@ if (empty($_SESSION['SESSION_USER']) && empty($_SESSION['SESSION_ID'])) {
             $durasi_detik     = $diff % 60;
             $durasi_kerja     = '' . $durasi_jam . ' jam, ' . floor($durasi_menit / 60) . ' menit';
 
+            // LOKASIII
+            // get lokasi kantor 
+
+            $query_get_kantor = "SELECT lat_building, long_building FROM building WHERE building_id = '6'";
+            $result_lokasi_kantor = $connection->query($query_get_kantor);
+            $row_lokasi_kantor = $result_lokasi_kantor->fetch_assoc();
+            $lat_buliding = $row_lokasi_kantor['lat_building'];
+            $long_building = $row_lokasi_kantor['long_building'];
+
+            // var_dump($row_absen22);
+            // die;
+
+            $query_absen22 = "SELECT presence_id,presence_date,time_in,time_out,picture_in,picture_out,present_id, latitude_longtitude_in,latitude_longtitude_out,information,TIMEDIFF(TIME(time_in),'$shift_time_in') AS selisih,if (time_in>'$shift_time_in','Telat',if(time_in='00:00:00','Tidak Masuk','Tepat Waktu')) AS status, TIMEDIFF(TIME(time_out),'$shift_time_out') AS selisih_out FROM presence WHERE $filter ORDER BY presence_id DESC";
+            $result_absen22 = $connection->query($query_absen22);
+            $row_absen22 = $result_absen22->fetch_assoc();
+            $lat_long_presence_outs = $row_absen22['latitude_longtitude_out'];
+
+            list($latitude,  $longitude) = explode(',', $row_absen['latitude_longtitude_in']);
+            list($latitude_out,  $longitude_out) = explode(',', $lat_long_presence_outs);
+
+            $officeLatLong =  "$lat_buliding, $long_building";
+
+
+            // jarak keluar
+            if ($lat_long_presence_outs == "") {
+              $resultDistance_out = '';
+            } else {
+              $resultDistance_out = distHaversine("$lat_long_presence_outs", $officeLatLong);
+            }
+
+            $lat_long_presence_inn = $row_absen['latitude_longtitude_in'];
+
+            // jarak masuk
+            if ($lat_long_presence_inn == "") {
+              $resultDistance_in = '';
+            } else {
+              $resultDistance_in = distHaversine("$lat_long_presence_inn", $officeLatLong);
+            }
+
+            // echo "<pre>" . print_r($row_absen['status'], TRUE) . "</pre>";
+            // var_dump($lat_long_presence_outs);
+            // die;
+
+
+
+
+
+
             // JAM LEMBUR =========================================
             if ($row_absen['time_out'] > $shift_time_out) {
               $lembur_kerja_start = strtotime('' . $date_month_year . ' ' . $shift_time_out . '');
@@ -166,48 +255,69 @@ if (empty($_SESSION['SESSION_USER']) && empty($_SESSION['SESSION_ID'])) {
             } else {
               $lembur = '';
             }
+
             echo '
-         <tr style="background:' . $background . ';color:' . $warna . '">
-            <td class="text-center">' . $d . '</td>
-            <td>' . format_hari_tanggal($date_month_year) . '</td>';
-            if (date("l", mktime(0, 0, 0, $bulan, $d, $tahun)) == "Sunday") {
+          <tr style="background:' . $background . ';color:' . $warna . '">
+                  <td class="text-center">' . $d . '</td>
+                  <td>' . format_hari_tanggal($date_month_year)  . '</td>';
+
+            if (date("l", mktime(0, 0, 0, $bulan, $d, $tahun)) == "Sunday" || date("l", mktime(0, 0, 0, $bulan, $d, $tahun)) == "Saturday") {
               if ($row_absen['time_in'] == '') {
                 echo '
-                <td class="text-center" colspan="3">Libur Akhir Pekan</td>';
+                <td class="text-center" colspan="2">Libur Akhir Pekan</td>';
               } else {
                 echo '
-                <td class="text-center">' . $row_absen['time_in'] . '</td>
+                <!-- <td class="text-center">' . $row_absen['time_in'] . '</td> -->
                 <td class="text-center">' . $row_absen['time_in'] . '</td>
               	<td class="text-center">' . $row_absen['selisih'] . '</td>';
               }
             } else {
               echo '
-              <td class="text-center">' . $shift_time_in . '</td>
+              <!-- <td class="text-center">' . $shift_time_in . '</td> -->
               <td class="text-center">' . $row_absen['time_in'] . '</td>
-              <td class="text-center">' . $row_absen['selisih'] . '</td>';
+              <td class="text-center">'  .  $resultDistance_in  .  '</td>';
+              // <td class="text-center">'  . '<a href="https://maps.google.com?q=' . $latitude . ',' . $longitude . '" target="_blank">Lihat Lokasi</a>'  .  '</td>';
+              // <td class="text-center">' . $latitude . '<br/>'  . $longitude . '</td>';
             }
 
-            if (date("l", mktime(0, 0, 0, $bulan, $d, $tahun)) == "Sunday") {
+            if (date("l", mktime(0, 0, 0, $bulan, $d, $tahun)) == "Sunday" || date("l", mktime(0, 0, 0, $bulan, $d, $tahun)) == "Saturday") {
               if ($row_absen['time_out'] == '') {
                 echo '
-                <td class="text-center" colspan="3">Libur Akhir Pekan</td>';
+                <td class="text-center" colspan="2">Libur Akhir Pekan</td>';
               } else {
                 echo '
-                <td class="text-center">' . $row_shift['time_out'] . '</td>
+                <!-- <td class="text-center">' . $row_shift['time_out'] . '</td> -->
               	<td class="text-center">' . $row_absen['time_out'] . '</td>
-              	<td class="text-center">' . $row_absen['selisih_out'] . '</td>';
+              	<td class="text-center">' . $row_absen['selisih_out']  . '</td>';
               }
             } else {
               echo '
-              <td class="text-center">' . $row_shift['time_out'] . '</td>
+              <!-- <td class="text-center">' . $row_shift['time_out'] . '</td> -->
               <td class="text-center">' . $row_absen['time_out'] . '</td>
-              <td class="text-center">' . $row_absen['selisih_out'] . '</td>';
+              // <td class="text-center">' .  $resultDistance_out  . '</td>';
+              // <td class="text-center">' . '<a href="https://maps.google.com?q=' . $latitude_out . ',' . $longitude_out . '" target="_blank">Lihat Lokasi</a>' . '</td>';
+              // <td class="text-center">' . $latitude_out . '<br/>'  . $longitude_out . '</td>';
             }
+
+
             echo '
-              <td>' . $durasi_kerja . '</td>
-              <td>' . $lembur . '</td>
-              <td>' . $status . ' ' . $status_time_in . '</td>
-              <td>' . $row_absen['information'] . '</td>
+                  <td>' . $status . ' ' . $status_time_in . '</td>
+            ';
+
+
+            if ($row_absen['selisih'] < '00:00:00') {
+              echo '
+                        <td>' . '' . '</td>';
+            } else {
+              echo '
+                        <td>' . $row_absen['selisih'] . '</td>';
+            }
+
+            echo '
+              <!-- <td>' . $lembur . '</td> -->
+              <!-- <td>' . $row_absen['information'] . '</td> -->
+              <!-- <td>' . $status . ' ' . $status_time_in . '</td> -->
+               <td>' . '' . '</td> 
           </tr>';
           }
 
@@ -238,6 +348,12 @@ if (empty($_SESSION['SESSION_USER']) && empty($_SESSION['SESSION_ID'])) {
           <p>Sakit : <span class="label label-warning">' . $sakit->num_rows . '</span></p>
           <p>Izin : <span class="label label-info">' . $izin->num_rows . '</span></p>
 
+          <p style="margin-top:30px;text-align:right;">Semarang ' . tgl_indo($date) . '</p>
+          
+          
+          
+          <p style="margin-top:50px;text-align:right;"> ' . $site_director . '</p>
+
       </div>
     </div>
   </section>
@@ -257,7 +373,9 @@ if (empty($_SESSION['SESSION_USER']) && empty($_SESSION['SESSION_ID'])) {
       //Explore to Excel -------------------------------------------------------
       break;
     case 'excel':
-
+      // $tester = 'test';
+      // var_dump($tester);
+      // die;
       if (empty($_GET['id'])) {
         $error[] = 'ID tidak boleh kosong';
       } else {
@@ -285,14 +403,17 @@ if (empty($_SESSION['SESSION_USER']) && empty($_SESSION['SESSION_ID'])) {
           $mpdf = new \Mpdf\Mpdf();
           ob_start();
 
+          // die(var_dump($employees_name));
+
           if (empty($_GET['print'])) {
             header("Content-type: application/vnd-ms-excel");
-            header("Content-Disposition: attachment; filename=Data-Absensi-$employees_name-$date.xls");
+            header("Content-Disposition: attachment; filename=Data-Absensi-$date.xls");
           } else {
             echo '<script>
-      window.print();
-    </script>';
+                    window.print();
+                  </script>';
           }
+
 
 
           echo '<!DOCTYPE html>
@@ -314,7 +435,7 @@ if (empty($_SESSION['SESSION_USER']) && empty($_SESSION['SESSION_ID'])) {
     <section class="container_box">
       <div class="row">';
           if (isset($_GET['from']) or isset($_GET['to'])) {
-            echo '<img src="../../../sw-content/kop.PNG">"';
+            // echo '<img src="../../../sw-content/kop.PNG">"';
             echo '<h3 class="text-center">LAPORAN DETAIL HARIAN<br>PERIODE WAKTU ' . tanggal_indo($_GET['from']) . ' - ' . $_GET['to'] . '</h3>';
           } else {
             echo '<h3 class="text-center">LAPORAN DETAIL BULAN<br>' . tanggal_indo($month) . ' - ' . $year . '</h3>';
@@ -324,28 +445,28 @@ if (empty($_SESSION['SESSION_USER']) && empty($_SESSION['SESSION_ID'])) {
         <p>Jabatan : ' . $row['position_name'] . '</p><br>
         <div class="content_box">
         <table class="customTable">
-          <thead>
-            <tr>
-              <th class="text-center">No.</th>
-              <th>Tanggal</th>
-              <th class="text-center">Jam Masuk</th>
-              <th class="text-center">Scan Masuk</th>
-              <th>Terlambat</th>
-              <th class="text-center">Jam Pulang</th>
-              <th class="text-center">Scan Pulang</th>
-              <th class="text-center">Pulang Cepat</th>
-              <th>Durasi</th>
-              <th>Lembur</th>
-              <th>Status</th>
-              <th>Keterangan</th>
-            </tr>
-          </thead>
-        <tbody>';
+        <thead>
+        <tr>
+          <th class="text-center" rowspan="2">No.</th>
+          <th rowspan="2">Tanggal</th>
+          <th class="text-center" colspan="4">Absen</th>
+          <th rowspan="2">Status</th>
+          <th rowspan="2">KWK</th>
+          <th rowspan="2">TTD</th>
+        </tr>
+        <tr>
+          <th class="text-center">Jam Masuk</th>
+          <th>Lokasi</th>
+          <th class="text-center">Jam Pulang</th>
+          <th class="text-center">Lokasi</th>
+        </tr>
+      </thead>
+      <tbody>';
           for ($d = 1; $d <= $jumlahhari; $d++) {
             $warna      = '';
             $background = '';
             $status     = 'Tidak Hadir';
-            if (date("l", mktime(0, 0, 0, $bulan, $d, $tahun)) == "Sunday") {
+            if (date("l", mktime(0, 0, 0, $bulan, $d, $tahun)) == "Sunday" || date("l", mktime(0, 0, 0, $bulan, $d, $tahun)) == "Saturday") {
               $warna = 'white';
               $background = '#FF0000';
               $status = 'Libur Akhir Pekan';
@@ -378,7 +499,7 @@ if (empty($_SESSION['SESSION_USER']) && empty($_SESSION['SESSION_ID'])) {
             $rowa =  $resulta->fetch_assoc();
 
             if ($row_absen['time_in'] == NULL) {
-              if (date("l", mktime(0, 0, 0, $bulan, $d, $tahun)) == "Sunday") {
+              if (date("l", mktime(0, 0, 0, $bulan, $d, $tahun)) == "Sunday" || date("l", mktime(0, 0, 0, $bulan, $d, $tahun)) == "Saturday") {
                 $status = 'Libur Akhir Pekan';
               } else {
                 $status = '<span class="label label-danger">Tidak Hadir</span>';
@@ -392,12 +513,6 @@ if (empty($_SESSION['SESSION_USER']) && empty($_SESSION['SESSION_ID'])) {
             // Status Absensi Jam Masuk
             if ($row_absen['status'] == 'Telat') {
               $status_time_in = '<label class="label label-danger pull-right">' . $row_absen['status'] . '</label>';
-              /*$waktu_kerja  = strtotime(''.$date_month_year.' '.$shift_time_in.'');
-          $waktu_absen  = strtotime(''.$date_month_year.' '.$row_absen['time_in'].'');
-          $diff    		= $waktu_absen - $waktu_kerja;
-          $terlambat_jam	= floor($diff / (60 * 60));
-          $terlambat_menit	= $diff - $terlambat_jam * (60 * 60);
-          $terlamat 	= ''.$terlambat_jam.' jam '.floor($terlambat_menit/60).' menit';*/
             } elseif ($row_absen['status'] == 'Tepat Waktu') {
               $status_time_in = '<label class="label label-info pull-right">' . $row_absen['status'] . '</label>';
               $terlamat   = '';
@@ -415,6 +530,54 @@ if (empty($_SESSION['SESSION_USER']) && empty($_SESSION['SESSION_ID'])) {
             $durasi_detik     = $diff % 60;
             $durasi_kerja     = '' . $durasi_jam . ' jam, ' . floor($durasi_menit / 60) . ' menit';
 
+            // LOKASIII
+            // get lokasi kantor 
+
+            $query_get_kantor = "SELECT lat_building, long_building FROM building WHERE building_id = '6'";
+            $result_lokasi_kantor = $connection->query($query_get_kantor);
+            $row_lokasi_kantor = $result_lokasi_kantor->fetch_assoc();
+            $lat_buliding = $row_lokasi_kantor['lat_building'];
+            $long_building = $row_lokasi_kantor['long_building'];
+
+            // var_dump($row_absen22);
+            // die;
+
+            $query_absen22 = "SELECT presence_id,presence_date,time_in,time_out,picture_in,picture_out,present_id, latitude_longtitude_in,latitude_longtitude_out,information,TIMEDIFF(TIME(time_in),'$shift_time_in') AS selisih,if (time_in>'$shift_time_in','Telat',if(time_in='00:00:00','Tidak Masuk','Tepat Waktu')) AS status, TIMEDIFF(TIME(time_out),'$shift_time_out') AS selisih_out FROM presence WHERE $filter ORDER BY presence_id DESC";
+            $result_absen22 = $connection->query($query_absen22);
+            $row_absen22 = $result_absen22->fetch_assoc();
+            $lat_long_presence_outs = $row_absen22['latitude_longtitude_out'];
+
+            list($latitude,  $longitude) = explode(',', $row_absen['latitude_longtitude_in']);
+            list($latitude_out,  $longitude_out) = explode(',', $lat_long_presence_outs);
+
+            $officeLatLong =  "$lat_buliding, $long_building";
+
+
+            // jarak keluar
+            if ($lat_long_presence_outs == "") {
+              $resultDistance_out = '';
+            } else {
+              $resultDistance_out = distHaversine("$lat_long_presence_outs", $officeLatLong);
+            }
+
+            $lat_long_presence_inn = $row_absen['latitude_longtitude_in'];
+
+            // jarak masuk
+            if ($lat_long_presence_inn == "") {
+              $resultDistance_in = '';
+            } else {
+              $resultDistance_in = distHaversine("$lat_long_presence_inn", $officeLatLong);
+            }
+
+            // echo "<pre>" . print_r($row_absen['status'], TRUE) . "</pre>";
+            // var_dump($lat_long_presence_outs);
+            // die;
+
+
+
+
+
+
             // JAM LEMBUR =========================================
             if ($row_absen['time_out'] > $shift_time_out) {
               $lembur_kerja_start = strtotime('' . $date_month_year . ' ' . $shift_time_out . '');
@@ -426,49 +589,63 @@ if (empty($_SESSION['SESSION_USER']) && empty($_SESSION['SESSION_ID'])) {
             } else {
               $lembur = '';
             }
+
             echo '
-         <tr style="background:' . $background . ';color:' . $warna . '">
-            <td class="text-center">' . $d . '</td>
-            <td>' . format_hari_tanggal($date_month_year) . '</td>';
-            if (date("l", mktime(0, 0, 0, $bulan, $d, $tahun)) == "Sunday") {
+      <tr style="background:' . $background . ';color:' . $warna . '">
+              <td class="text-center">' . $d . '</td>
+              <td>' . format_hari_tanggal($date_month_year)  . '</td>';
+
+            if (date("l", mktime(0, 0, 0, $bulan, $d, $tahun)) == "Sunday" || date("l", mktime(0, 0, 0, $bulan, $d, $tahun)) == "Saturday") {
               if ($row_absen['time_in'] == '') {
                 echo '
-                <td class="text-center" colspan="3">Libur Akhir Pekan</td>';
+            <td class="text-center" colspan="2">Libur Akhir Pekan</td>';
               } else {
                 echo '
-                <td class="text-center">' . $row_absen['time_in'] . '</td>
-                <td class="text-center">' . $row_absen['time_in'] . '</td>
-              	<td class="text-center">Terlambat</td>';
+            
+            <td class="text-center">' . $row_absen['time_in'] . '</td>
+            <td class="text-center">' . $row_absen['selisih'] . '</td>';
               }
             } else {
               echo '
-              <td class="text-center">' . $shift_time_in . '</td>
-              <td class="text-center">' . $row_absen['time_in'] . '</td>
-              <td class="text-center">' . $row_absen['selisih'] . '</td>';
+          
+          <td class="text-center">' . $row_absen['time_in'] . '</td>
+          <td class="text-center">'  .  $resultDistance_in  .  '</td>';
             }
 
-            if (date("l", mktime(0, 0, 0, $bulan, $d, $tahun)) == "Sunday") {
+            if (date("l", mktime(0, 0, 0, $bulan, $d, $tahun)) == "Sunday" || date("l", mktime(0, 0, 0, $bulan, $d, $tahun)) == "Saturday") {
               if ($row_absen['time_out'] == '') {
                 echo '
-                <td class="text-center" colspan="3">Libur Akhir Pekan</td>';
+            <td class="text-center" colspan="2">Libur Akhir Pekan</td>';
               } else {
                 echo '
-                <td class="text-center">' . $row_shift['time_out'] . '</td>
-              	<td class="text-center">' . $row_absen['time_out'] . '</td>
-              	<td class="text-center">' . $row_absen['selisih_out'] . '</td>';
+            
+            <td class="text-center">' . $row_absen['time_out'] . '</td>
+            <td class="text-center">' . $row_absen['selisih_out']  . '</td>';
               }
             } else {
               echo '
-              <td class="text-center">' . $row_shift['time_out'] . '</td>
-              <td class="text-center">' . $row_absen['time_out'] . '</td>
-              <td class="text-center">' . $row_absen['selisih_out'] . '</td>';
+          
+          <td class="text-center">' . $row_absen['time_out'] . '</td>
+           <td class="text-center">' .  $resultDistance_out  . '</td>';
             }
+
+
             echo '
-              <td>' . $durasi_kerja . '</td>
-              <td>' . $lembur . '</td>
               <td>' . $status . ' ' . $status_time_in . '</td>
-              <td>' . $row_absen['information'] . '</td>
-          </tr>';
+        ';
+
+
+            if ($row_absen['selisih'] < '00:00:00') {
+              echo '
+                    <td>' . '' . '</td>';
+            } else {
+              echo '
+                    <td>' . $row_absen['selisih'] . '</td>';
+            }
+
+            echo '
+           <td>' . '' . '</td> 
+      </tr>';
           }
 
           echo '<tbody>
@@ -497,7 +674,12 @@ if (empty($_SESSION['SESSION_USER']) && empty($_SESSION['SESSION_ID'])) {
           <p>Telat : <span class="label label-danger">' . $telat->num_rows . '</span></p>
           <p>Sakit : <span class="label label-warning">' . $sakit->num_rows . '</span></p>
           <p>Izin : <span class="label label-info">' . $izin->num_rows . '</span></p>
-
+          <p style="margin-top:30px;text-align:right;">Semarang ' . tgl_indo($date) . '</p>
+          
+          <br/>
+          <br/>
+          
+          <p style="margin-top:50px;text-align:right;"> ' . $site_director . '</p>
         </div>
       </div>
     </section>
@@ -584,7 +766,7 @@ if (empty($_SESSION['SESSION_USER']) && empty($_SESSION['SESSION_ID'])) {
             $warna      = '';
             $background = '';
             $status     = 'Tidak Hadir';
-            if (date("l", mktime(0, 0, 0, $bulan, $d, $tahun)) == "Sunday") {
+            if (date("l", mktime(0, 0, 0, $bulan, $d, $tahun)) == "Sunday" || date("l", mktime(0, 0, 0, $bulan, $d, $tahun)) == "Saturday") {
               $warna = 'white';
               $background = '#FF0000';
               $status = 'Libur Akhir Pekan';
@@ -598,6 +780,7 @@ if (empty($_SESSION['SESSION_USER']) && empty($_SESSION['SESSION_ID'])) {
             } else {
               $filter = "employees_id='$id' AND presence_date='$date_month_year' AND MONTH(presence_date) ='$month'";
             }
+            // $filter_cuty= "employees_id='$id' AND (MONTH(cuty_start) ='$month' OR (MONTH(cuty_end)='$month'))";
 
 
             $query_absen = "SELECT presence_id,presence_date,time_in,time_out,picture_in,picture_out,present_id,latitude_longtitude_in,information,TIMEDIFF(TIME(time_in),'$shift_time_in') AS selisih,if (time_in>'$shift_time_in','Telat',if(time_in='00:00:00','Tidak Masuk','Tepat Waktu')) AS status FROM presence WHERE $filter";
@@ -609,7 +792,7 @@ if (empty($_SESSION['SESSION_USER']) && empty($_SESSION['SESSION_ID'])) {
             $rowa =  $resulta->fetch_assoc();
 
             if ($row_absen['time_in'] == NULL) {
-              if (date("l", mktime(0, 0, 0, $bulan, $d, $tahun)) == "Sunday") {
+              if (date("l", mktime(0, 0, 0, $bulan, $d, $tahun)) == "Sunday" || date("l", mktime(0, 0, 0, $bulan, $d, $tahun)) == "Saturday") {
                 $status = 'Libur Akhir Pekan';
               } else {
                 $status = '<span class="label label-danger">Tidak Hadir</span>';
@@ -634,7 +817,7 @@ if (empty($_SESSION['SESSION_USER']) && empty($_SESSION['SESSION_ID'])) {
          <tr style="background:' . $background . ';color:' . $warna . '">
             <td class="text-center">' . $d . '</td>
             <td>' . format_hari_tanggal($date_month_year) . '</td>';
-            if (date("l", mktime(0, 0, 0, $bulan, $d, $tahun)) == "Sunday") {
+            if (date("l", mktime(0, 0, 0, $bulan, $d, $tahun)) == "Sunday" || date("l", mktime(0, 0, 0, $bulan, $d, $tahun)) == "Saturday") {
               if ($row_absen['time_in'] == '') {
                 echo '
                 <td class="text-center">Libur Akhir Pekan</td>';
@@ -647,7 +830,7 @@ if (empty($_SESSION['SESSION_USER']) && empty($_SESSION['SESSION_ID'])) {
               <td>' . $row_absen['time_in'] . '</td>';
             }
 
-            if (date("l", mktime(0, 0, 0, $bulan, $d, $tahun)) == "Sunday") {
+            if (date("l", mktime(0, 0, 0, $bulan, $d, $tahun)) == "Sunday" || date("l", mktime(0, 0, 0, $bulan, $d, $tahun)) == "Saturday") {
               if ($row_absen['time_out'] == '') {
                 echo '
                 <td class="text-center">Libur Akhir Pekan</td>';
@@ -735,8 +918,48 @@ if (empty($_SESSION['SESSION_USER']) && empty($_SESSION['SESSION_ID'])) {
     p{line-height:20px;padding:0px;margin: 5px;}.pull-right{float:right}
     </style>
 </head>
-<body>';
+<body>
+
+';
+
+        echo '
+    <section class="container_box">
+      <div class="row">';
+        echo '<h3 style="text-align:center;">REKAPITULASI PRESENSI GURU DAN KARYAWAN SMK N 1 KALIWUNGU</h3>';
+        if (isset($_GET['from']) or isset($_GET['to'])) {
+
+          echo '<h3 style="text-align:center;">BULAN ' . $list_month[$_GET['from'] - 1] . ' TAHUN ' . $_GET['to'] . '</h3>';
+        } else {
+          echo '<h3 style="text-align:center;">BULAN ' . tanggal_indo($month) . ' TAHUN ' . $year . '</h3>';
+        }
+        echo '
+      <div class="content_box">
+        <table class="customTable">
+          <thead>
+            <tr>
+              <th class="text-center">No.</th>
+              <th class="text-center">Nama</th>
+              <th>KWK(menit)</th>
+              <th class="text-center">Hadir</th>
+              <th class="text-center">WFH</th>
+              <th>Alpha</th>
+              <th class="text-center">Ijin</th>
+              <th class="text-center">Sakit</th>
+              <th class="text-center">Dinas Luar (DL)</th>
+              <th>Diklat (Dk)</th>
+              <th>Cuti Alan Penting (CAR)</th>
+              <th>Tidak Absen Masuk (TAM)</th>
+              <th>Tidak Absen Pulang (TAP)</th>
+              <th>Terlambat</th>
+              <th>Pulang Cepat</th>
+              <th>Libur Hari Besar (HR)</th>
+              <th>Libur</th>
+            </tr>
+          </thead>
+        <tbody>';
+        $no = 0;
         while ($row = $result->fetch_assoc()) {
+          $no++;
           $employees_name = $row['employees_name'];
           $id             = $row['id'];
 
@@ -755,168 +978,6 @@ if (empty($_SESSION['SESSION_USER']) && empty($_SESSION['SESSION_ID'])) {
           $shift_time_in  = $row['time_in'];
           $newtimestamp   = strtotime('' . $shift_time_in . ' + 05 minute');
           $newtimestamp   = date('H:i:s', $newtimestamp);
-          echo '
-    <section class="container_box">
-      <div class="row">';
-          if (isset($_GET['from']) or isset($_GET['to'])) {
-            echo '<h3>DATA ABSENSI BULAN ' . tanggal_indo($_GET['from']) . ' - ' . $_GET['to'] . '</h3>';
-          } else {
-            echo '<h3>DATA ABSENSI BULAN ' . tanggal_indo($month) . ' - ' . $year . '</h3>';
-          }
-          echo '
-        <p>Nama   : ' . $row['employees_name'] . '</p>
-        <p>Jabatan : ' . $row['position_name'] . '</p><br>
-      <div class="content_box">
-        <table class="customTable">
-          <thead>
-            <tr>
-              <th class="text-center">No.</th>
-              <th>Tanggal</th>
-              <th class="text-center">Jam Masuk</th>
-              <th class="text-center">Scan Masuk</th>
-              <th>Terlambat</th>
-              <th class="text-center">Jam Pulang</th>
-              <th class="text-center">Scan Pulang</th>
-              <th class="text-center">Pulang Cepat</th>
-              <th>Durasi</th>
-              <th>Lembur</th>
-              <th>Status</th>
-              <th>Keterangan</th>
-            </tr>
-          </thead>
-        <tbody>';
-          for ($d = 1; $d <= $jumlahhari; $d++) {
-            $warna      = '';
-            $background = '';
-            $status     = 'Tidak Hadir';
-            if (date("l", mktime(0, 0, 0, $bulan, $d, $tahun)) == "Sunday") {
-              $warna = 'white';
-              $background = '#FF0000';
-              $status = 'Libur Akhir Pekan';
-            }
-            $date_month_year = '' . $year . '-' . $bulan . '-' . $d . '';
-
-            if (isset($_GET['from']) or isset($_GET['to'])) {
-              $month = $_GET['from'];
-              $year  = $_GET['to'];
-              $filter = "employees_id='$id' AND presence_date='$date_month_year' AND MONTH(presence_date)='$month' AND year(presence_date)='$year'";
-            } else {
-              $filter = "employees_id='$id' AND  presence_date='$date_month_year' AND MONTH(presence_date) ='$month'";
-            }
-
-
-            $query_shift = "SELECT time_in,time_out FROM shift WHERE shift_id='$row[shift_id]'";
-            $result_shift = $connection->query($query_shift);
-            $row_shift = $result_shift->fetch_assoc();
-            $shift_time_in = $row_shift['time_in'];
-            $shift_time_out = $row_shift['time_out'];
-            $newtimestamp = strtotime('' . $shift_time_in . ' + 05 minute');
-            $newtimestamp = date('H:i:s', $newtimestamp);
-
-            $query_absen = "SELECT presence_id,presence_date,time_in,time_out,picture_in,picture_out,present_id,latitude_longtitude_in,information,TIMEDIFF(TIME(time_in),'$shift_time_in') AS selisih,if (time_in>'$shift_time_in','Telat',if(time_in='00:00:00','Tidak Masuk','Tepat Waktu')) AS status,TIMEDIFF(TIME(time_out),'$shift_time_out') AS selisih_out FROM presence WHERE $filter ORDER BY presence_id DESC";
-            $result_absen = $connection->query($query_absen);
-            $row_absen = $result_absen->fetch_assoc();
-
-            $querya = "SELECT present_id,present_name FROM present_status WHERE present_id='$row_absen[present_id]'";
-            $resulta = $connection->query($querya);
-            $rowa =  $resulta->fetch_assoc();
-
-            if ($row_absen['time_in'] == NULL) {
-              if (date("l", mktime(0, 0, 0, $bulan, $d, $tahun)) == "Sunday") {
-                $status = 'Libur Akhir Pekan';
-              } else {
-                $status = '<span class="label label-danger">Tidak Hadir</span>';
-              }
-              $time_in = $row_absen['time_in'];
-            } else {
-              $status = $rowa['present_name'];
-              $time_in = $row_absen['time_in'];
-            }
-
-            // Status Absensi Jam Masuk
-            if ($row_absen['status'] == 'Telat') {
-              $status_time_in = '<label class="label label-danger pull-right">' . $row_absen['status'] . '</label>';
-              /*$waktu_kerja  = strtotime(''.$date_month_year.' '.$shift_time_in.'');
-          $waktu_absen  = strtotime(''.$date_month_year.' '.$row_absen['time_in'].'');
-          $diff       = $waktu_absen - $waktu_kerja;
-          $terlambat_jam  = floor($diff / (60 * 60));
-          $terlambat_menit  = $diff - $terlambat_jam * (60 * 60);
-          $terlamat   = ''.$terlambat_jam.' jam '.floor($terlambat_menit/60).' menit';*/
-            } elseif ($row_absen['status'] == 'Tepat Waktu') {
-              $status_time_in = '<label class="label label-info pull-right">' . $row_absen['status'] . '</label>';
-              $terlamat   = '';
-            } else {
-              $status_time_in = '';
-              $terlamat   = '';
-            }
-
-            // DURASI KERJA  =========================================
-            $durasi_kerja_start = strtotime('' . $date_month_year . ' ' . $row_absen['time_in'] . '');
-            $durasi_kerja_end   = strtotime('' . $date_month_year . ' ' . $row_absen['time_out'] . '');
-            $diff         = $durasi_kerja_end - $durasi_kerja_start;
-            $durasi_jam       = floor($diff / (60 * 60));
-            $durasi_menit     = $diff - ($durasi_jam * (60 * 60));
-            $durasi_detik     = $diff % 60;
-            $durasi_kerja     = '' . $durasi_jam . ' jam, ' . floor($durasi_menit / 60) . ' menit';
-
-            // JAM LEMBUR =========================================
-            if ($row_absen['time_out'] > $shift_time_out) {
-              $lembur_kerja_start = strtotime('' . $date_month_year . ' ' . $shift_time_out . '');
-              $lembur_kerja_end   = strtotime('' . $date_month_year . ' ' . $row_absen['time_out'] . '');
-              $diff         = $lembur_kerja_end - $lembur_kerja_start;
-              $lembur_jam       = floor($diff / (60 * 60));
-              $lembur_menit     = $diff - ($lembur_jam * (60 * 60));
-              $lembur       = '' . $lembur_jam . ' jam, ' . floor($lembur_menit / 60) . ' menit';
-            } else {
-              $lembur = '';
-            }
-            echo '
-         <tr style="background:' . $background . ';color:' . $warna . '">
-            <td class="text-center">' . $d . '</td>
-            <td>' . format_hari_tanggal($date_month_year) . '</td>';
-            if (date("l", mktime(0, 0, 0, $bulan, $d, $tahun)) == "Sunday") {
-              if ($row_absen['time_in'] == '') {
-                echo '
-                <td class="text-center" colspan="3">Libur Akhir Pekan</td>';
-              } else {
-                echo '
-                <td class="text-center">' . $row_absen['time_in'] . '</td>
-                <td class="text-center">' . $row_absen['time_in'] . '</td>
-                <td class="text-center">Terlambat</td>';
-              }
-            } else {
-              echo '
-              <td class="text-center">' . $shift_time_in . '</td>
-              <td class="text-center">' . $row_absen['time_in'] . '</td>
-              <td class="text-center">' . $row_absen['selisih'] . '</td>';
-            }
-
-            if (date("l", mktime(0, 0, 0, $bulan, $d, $tahun)) == "Sunday") {
-              if ($row_absen['time_out'] == '') {
-                echo '
-                <td class="text-center" colspan="3">Libur Akhir Pekan</td>';
-              } else {
-                echo '
-                <td class="text-center">' . $row_shift['time_out'] . '</td>
-                <td class="text-center">' . $row_absen['time_out'] . '</td>
-                <td class="text-center">' . $row_absen['selisih_out'] . '</td>';
-              }
-            } else {
-              echo '
-              <td class="text-center">' . $row_shift['time_out'] . '</td>
-              <td class="text-center">' . $row_absen['time_out'] . '</td>
-              <td class="text-center">' . $row_absen['selisih_out'] . '</td>';
-            }
-            echo '
-              <td>' . $durasi_kerja . '</td>
-              <td>' . $lembur . '</td>
-              <td>' . $status . ' ' . $status_time_in . '</td>
-              <td>' . $row_absen['information'] . '</td>
-          </tr>';
-          }
-
-          echo '<tbody>
-      </table>';
           if (isset($_GET['from']) or isset($_GET['to'])) {
             $month = $_GET['from'];
             $year  = $_GET['to'];
@@ -924,6 +985,11 @@ if (empty($_SESSION['SESSION_USER']) && empty($_SESSION['SESSION_ID'])) {
           } else {
             $filter = "employees_id='$id' AND MONTH(presence_date) ='$month' AND employees_id='$id'";
           }
+
+          $libur_hari_besar = 1;
+
+          // libur sebulan ada 8 hari + libur hari besar
+          $libur = 8 + $libur_hari_besar;
 
           $query_hadir = "SELECT presence_id FROM presence WHERE $filter AND present_id='1' ORDER BY presence_id DESC";
           $hadir = $connection->query($query_hadir);
@@ -934,18 +1000,105 @@ if (empty($_SESSION['SESSION_USER']) && empty($_SESSION['SESSION_ID'])) {
           $query_izin = "SELECT presence_id FROM presence WHERE $filter AND present_id='3' ORDER BY presence_id";
           $izin = $connection->query($query_izin);
 
-          $query_telat = "SELECT presence_id FROM presence WHERE $filter AND time_in>'$shift_time_in'";
+          $query_telat = "SELECT 
+                  P.presence_id,P.time_in,
+                  S.time_in AS shift_time_in 
+                  FROM presence P 
+                  LEFT JOIN shift S ON S.shift_id=P.shift_id
+                  WHERE $filter AND P.time_in>'$shift_time_in'";
           $telat = $connection->query($query_telat);
+          $kwk = 0;
+          while ($ro = $telat->fetch_assoc()) {
+            $time_innya = $ro["time_in"];
+            $shift_time_in = $ro["shift_time_in"];
 
-          echo '<p>Hadir : <span class="label label-success">' . $hadir->num_rows . '</span></p>
-          <p>Telat : <span class="label label-danger">' . $telat->num_rows . '</span></p>
-          <p>Sakit : <span class="label label-warning">' . $sakit->num_rows . '</span></p>
-          <p>Izin : <span class="label label-info">' . $izin->num_rows . '</span></p>
+            $diffTelat = strtotime($time_innya) - strtotime($shift_time_in);
+            // echo $time_innya;
+            // echo "<br/>time in ==> " . $time_innya;
+            // echo "<br/>shift ==> " . $shift_time_in;
+            // echo "<br/>difff ==> " . ceil($diffTelat / 60);
+
+            $jamSatuan = ceil($diffTelat);
+            $menitSatuan = ceil($diffTelat / 60);
+
+            $kwk = $menitSatuan;
+          }
+
+
+          // foreach ($telat as $value) {
+          //   $queyShift="SELECT * FROM"
+          // }
+          $queryWFH = "SELECT presence_id FROM presence WHERE $filter AND shift_id=6";
+          $wfh = $connection->query($queryWFH)->num_rows;
+
+
+
+          $alpha = $jumlahhari - $hadir->num_rows - $libur;
+
+          $query_dinas_luar = "SELECT cuty_id FROM cuty WHERE employees_id='$id' AND MONTH(cuty_start) ='$month' AND jenis_cuty='dl'";
+          $dinas_luar = $connection->query($query_dinas_luar)->num_rows;
+
+          $query_diklat = "SELECT cuty_id FROM cuty WHERE employees_id='$id' AND MONTH(cuty_start) ='$month' AND jenis_cuty='dk'";
+
+          $diklat = $connection->query($query_diklat)->num_rows;
+
+          $query_alasan_penting = "SELECT cuty_id FROM cuty WHERE employees_id='$id' AND MONTH(cuty_start) ='$month' AND jenis_cuty='car'";
+          $cuti_alasan_penting = $connection->query($query_alasan_penting)->num_rows;
+
+          $qery_tidak_absen_masuk = "SELECT presence_id FROM presence WHERE $filter AND time_in='00:00:00' AND time_out <> '00:00:00'";
+          $tidak_absen_masuk = $connection->query($qery_tidak_absen_masuk)->num_rows;
+
+
+          $query_tidak_absen_keluar = "SELECT presence_id FROM presence WHERE $filter AND time_out = '00:00:00'";
+          $tidak_absen_keluar = $connection->query($query_tidak_absen_keluar)->num_rows;
+
+          $query_pulang_cepat = "SELECT presence_id FROM presence WHERE $filter AND time_out<'$shift_time_out'";
+
+          $pulang_cepat = $connection->query($query_pulang_cepat)->num_rows;
+
+
+
+          // echo '<p>Hadir : <span class="label label-success">' . $hadir->num_rows . '</span></p>
+          // <p>Telat : <span class="label label-danger">' . $telat->num_rows . '</span></p>
+          // <p>Sakit : <span class="label label-warning">' . $sakit->num_rows . '</span></p>
+          // <p>Izin : <span class="label label-info">' . $izin->num_rows . '</span></p>
+          // start tbody
+          echo '
+            <tr>
+              <td class="text-center">' . $no . '</td>
+              <td nowrap>' . $employees_name . '</td>
+              <td class="text-center">' . $kwk . '</td>
+              <td class="text-center">' . $hadir->num_rows . '</td>
+              <td class="text-center">' . $wfh . '</td>
+              <td class="text-center">' . $alpha . '</td>
+              <td class="text-center">' . $izin->num_rows . '</td>
+              <td class="text-center">' . $sakit->num_rows . '</td>
+              <td class="text-center">' . $dinas_luar . '</td>
+              <td class="text-center">' . $diklat . '</td>
+              <td class="text-center">' . $cuti_alasan_penting . '</td>
+              <td class="text-center">' . $tidak_absen_masuk . '</td>
+              <td class="text-center">' . $tidak_absen_keluar . '</td>
+              <td class="text-center">' . $telat->num_rows . '</td>
+              <td class="text-center">' . $pulang_cepat . '</td>
+              <td class="text-center">' . $libur_hari_besar . '</td>
+              <td class="text-center">' . $libur . '</td>
+            </tr>
+          ';
+        }
+        echo '<tbody>
+      </table>
+
+          <p style="margin-top:30px;text-align:right;">Semarang ' . tgl_indo($date) . '</p>
+          
+          <br/>
+          <br/>
+          
+          <p style="margin-top:50px;text-align:right;"> ' . $site_director . '</p>
+         
 
       </div>
     </div>
   </section>';
-        }
         echo '
 </body>
 </html>';

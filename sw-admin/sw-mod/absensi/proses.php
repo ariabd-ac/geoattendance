@@ -91,7 +91,7 @@ if (empty($_SESSION['SESSION_USER']) && empty($_SESSION['SESSION_ID'])) {
           $warna      = '';
           $background = '';
           $status_hadir     = 'Tidak Hadir';
-          if (date("l", mktime(0, 0, 0, $bulan, $d, $tahun)) == "Sunday") {
+          if (date("l", mktime(0, 0, 0, $bulan, $d, $tahun)) == "Sunday" || date("l", mktime(0, 0, 0, $bulan, $d, $tahun)) == "Saturday") {
             $warna = '#ffffff';
             $background = '#FF0000';
             $status_hadir = 'Libur Akhir Pekan';
@@ -111,6 +111,19 @@ if (empty($_SESSION['SESSION_USER']) && empty($_SESSION['SESSION_ID'])) {
           $row    = $result->fetch_assoc();
 
 
+          // get lokasi kantor 
+
+          $query_get_kantor = "SELECT lat_building, long_building FROM building WHERE building_id = '6'";
+          $result_lokasi_kantor = $connection->query($query_get_kantor);
+          $row_lokasi_kantor = $result_lokasi_kantor->fetch_assoc();
+          $lat_buliding = $row_lokasi_kantor['lat_building'];
+          $long_building = $row_lokasi_kantor['long_building'];
+
+
+
+          // end get lokasi kantor
+
+
           $query_shift = "SELECT time_in,time_out FROM shift WHERE shift_id='$row[shift_id]'";
           $result_shift = $connection->query($query_shift);
           $row_shift = $result_shift->fetch_assoc();
@@ -122,13 +135,15 @@ if (empty($_SESSION['SESSION_USER']) && empty($_SESSION['SESSION_ID'])) {
           $query_absen = "SELECT presence_id,presence_date,time_in,time_out,picture_in,picture_out,present_id, latitude_longtitude_in,latitude_longtitude_out,information,TIMEDIFF(TIME(time_in),'$shift_time_in') AS selisih,if (time_in>'$shift_time_in','Telat',if(time_in='00:00:00','Tidak Masuk','Tepat Waktu')) AS status, TIMEDIFF(TIME(time_out),'$shift_time_out') AS selisih_out FROM presence WHERE $filter ORDER BY presence_id DESC";
           $result_absen = $connection->query($query_absen);
           $row_absen = $result_absen->fetch_assoc();
+          $lat_long_presence_outs = $row_absen['latitude_longtitude_out'];
+
           // Status Kehadiran
           $querya = "SELECT present_id,present_name FROM present_status WHERE present_id='$row_absen[present_id]'";
           $resulta = $connection->query($querya);
           $rowa =  $resulta->fetch_assoc();
           // Status Kehadiran
           if ($row_absen['time_in'] == NULL) {
-            if (date("l", mktime(0, 0, 0, $bulan, $d, $tahun)) == "Sunday") {
+            if (date("l", mktime(0, 0, 0, $bulan, $d, $tahun)) == "Sunday" || date("l", mktime(0, 0, 0, $bulan, $d, $tahun)) == "Saturday") {
               $status_hadir = 'Libur Akhir Pekan';
             } else {
               $status_hadir = '<span class="label label-danger">Tidak Hadir</span>';
@@ -165,12 +180,26 @@ if (empty($_SESSION['SESSION_USER']) && empty($_SESSION['SESSION_ID'])) {
           // -6.9952841,109.1105971 // kantor bupati tegal
           // -6.9956675,109.1257462
 
+          // smk 1 kaliwungu
+          // lokasi -7.463889, 110.615290
+          // $officeLatLong = array("lat" => $lat_buliding, "long" => $long_building);
+          $officeLatLong =  "$lat_buliding, $long_building";
 
           $distance_in  = getDistanceBetweenPoints($pointOffice['lat'], $pointOffice['long'], $latitude, $longitude);
           $distance_out = getDistanceBetweenPoints($pointOffice['lat'], $pointOffice['long'], $latitude_out, $longitude_out);
 
           $distance_in2 = distHaversine($row_absen['latitude_longtitude_in'], '-6.9956675, 109.1257462');
-          $distance_out2 = distHaversine($row_absen['latitude_longtitude_out'], '-6.9956675, 109.1257462');
+          $distance_out2 = distHaversine('-6.894316, 109.215563', '-7.463889, 110.615290');
+
+
+
+          if ($lat_long_presence_outs == "") {
+            $resultDistance_out2 = 'Absen keluar dulu';
+          } else {
+            $resultDistance_out2 = distHaversine("$lat_long_presence_outs", $officeLatLong);
+          }
+          // var_dump($resultDistance_out2);
+          // die;
 
 
           // calculating a distance
@@ -200,7 +229,7 @@ if (empty($_SESSION['SESSION_USER']) && empty($_SESSION['SESSION_ID'])) {
           <td class="text-center">' . $row_absen['time_out'] . '</td>
           <td class="text-center">' . $selisih_out . '</td>
           <td>' . $status_hadir . '<br>' . $row_absen['information'] . '</td>
-          <td class="text-center">' . $distance_out2 . '</td>
+          <td class="text-center">' . $resultDistance_out2 . '</td>
           <td class="text-right">
               <button type="button" class="btn btn-warning btn-xs btn-modal enable-tooltip" title="Lokasi" data-latitude="' . $latitude . '" data-longitude="' . $longitude . '"><i class="fa fa-map-marker"></i> Masuk</button>
               <button type="button" class="btn btn-warning btn-xs btn-modal enable-tooltip" title="Lokasi" data-latitude="' . $latitude_out . '" data-longitude="' . $longitude_out . '"><i class="fa fa-map-marker"></i> Pulang</button></td>

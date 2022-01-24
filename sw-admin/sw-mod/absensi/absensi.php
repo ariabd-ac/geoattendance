@@ -139,9 +139,9 @@ if (empty($connection)) {
         echo '<option value="10">Oktober</option>';
       }
       if ($month == 11) {
-        echo '<option value="12" selected>November</option>';
+        echo '<option value="11" selected>November</option>';
       } else {
-        echo '<option value="12">November</option>';
+        echo '<option value="11">November</option>';
       }
       if ($month == 12) {
         echo '<option value="12" selected>Desember</option>';
@@ -155,7 +155,9 @@ if (empty($connection)) {
                 <div class="form-group">
                   <label>Tahun</label>
                   <select class="form-control year" required>';
-      $mulai = date('Y') - 0;
+      $mulai = date('Y') - 1;
+      // var_dump($mulai);
+      // die;
       for ($i = $mulai; $i < $mulai + 50; $i++) {
         $sel = $i == date('Y') ? ' selected="selected"' : '';
         echo '<option value="' . $i . '"' . $sel . '>' . $i . '</option>';
@@ -167,7 +169,7 @@ if (empty($connection)) {
                 <div class="form-group">
                   <label>Tipe</label>
                   <select class="form-control type" required>
-                    <!-- <option value="excel">EXCEL</option> -->
+                     <option value="excel">EXCEL</option>
                     <option value="print">PRINT</option>
                   </select>
                 </div>
@@ -275,9 +277,9 @@ if (empty($connection)) {
             echo '<option value="10">Oktober</option>';
           }
           if ($month == 11) {
-            echo '<option value="12" selected>November</option>';
+            echo '<option value="11" selected>November</option>';
           } else {
-            echo '<option value="12">November</option>';
+            echo '<option value="11">November</option>';
           }
           if ($month == 12) {
             echo '<option value="12" selected>Desember</option>';
@@ -292,7 +294,7 @@ if (empty($connection)) {
           <div class="col-md-4">
             <div class="form-group">
               <select class="form-control year" required>';
-          $mulai = date('Y') - 0;
+          $mulai = date('Y') - 1;
           for ($i = $mulai; $i < $mulai + 50; $i++) {
             $sel = $i == date('Y') ? ' selected="selected"' : '';
             echo '<option value="' . $i . '"' . $sel . '>' . $i . '</option>';
@@ -312,8 +314,8 @@ if (empty($connection)) {
                   </button>
                   <ul class="dropdown-menu" role="menu">
                     <li><a href="#" class="btn-print" data-id="pdf">PDF</a></li>
-                    <!-- <li><a href="#" class="btn-print" data-id="excel">EXCEL</a></li> -->
-                    <li><a href="#" class="btn-print" data-id="print">PRINT</a></li>
+                     <li><a href="#" class="btn-print" data-id="excel">EXCEL</a></li> 
+                    <!-- <li><a href="#" class="btn-print" data-id="print">PRINT</a></li> -->
                   </ul>
             </div>
           </div>
