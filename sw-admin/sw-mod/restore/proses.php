@@ -50,9 +50,13 @@ function backup($conn, $database_name)
     $tables = array();
     $sql = "SHOW TABLES";
     $result = mysqli_query($conn, $sql);
+    
     while ($row = mysqli_fetch_row($result)) {
         $tables[] = $row[0];
+        
     }
+    echo 'table == >';
+    var_dump($tables);
     $sqlScript = "";
     $sqlScript .= "\n\n USE " . $database_name . ";\n\n";
 
@@ -90,6 +94,11 @@ function backup($conn, $database_name)
         $sqlScript .= "\n";
     }
 
+    echo "Script == >";
+    echo $sqlScript;
+
+    die;
+
     if (!empty($sqlScript)) {
 
         // Save the SQL script to a backup file
@@ -110,6 +119,8 @@ function backup($conn, $database_name)
         flush();
         readfile($backup_file_name);
         exec('rm ' . $backup_file_name);
+    }else{
+        die("Empty Script");
     }
 }
 
