@@ -115,15 +115,20 @@
                 let c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
                 let d = R * c;
                 // hasil akhir dalam satuan kilometer
-                return d;
+                return Math.floor(d) * 1000;
             }
 
             // Define callback function for successful attempt
             function successCallback(position) {
                 result.innerHTML = "" + position.coords.latitude + "," + position.coords.longitude + "";
-                let res_distance = distHaversine( "" + position.coords.latitude + "," + position.coords.longitude + "" , '-7.463889, 110.615290');
-                distance.innerHTML = res_distance;
-
+                let res_distance = distHaversine("" + position.coords.latitude + "," + position.coords.longitude + "" , '-7.463889, 110.615290');
+                if(shiftId == 8){
+                    if(res_distance > 500){ // kurang dari 500 meter
+                        $('.btn-action-absent').prop('disabled','disabled');
+                    }else{
+                        $('.btn-action-absent').removeAttr('disabled');
+                    }
+                }
             }
 
             // Define callback function for failed attempt

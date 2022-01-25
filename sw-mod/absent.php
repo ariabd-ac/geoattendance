@@ -36,7 +36,7 @@ if(!isset($_COOKIE['COOKIES_MEMBER']) && !isset($_COOKIE['COOKIES_COOKIES'])){
                 <!--<h3>'.tgl_ind($date).' - <span class="clock"></span></h3>-->
                 <p>Lat-Long: <span class="latitude" id="latitude"></span></p>
                 </div>
-                <span id="shiftid">'.$row_user['shift_id'].'</span>
+                <span id="shiftid" style="display:none;">'.$row_user['shift_id'].'</span>
                 <span id="distance"></span>
                 <div class="wallet-footer text-center">
                     <div class="webcam-capture-body text-center">
@@ -45,11 +45,11 @@ if(!isset($_COOKIE['COOKIES_MEMBER']) && !isset($_COOKIE['COOKIES_COOKIES'])){
                             ';
                             if($result_absent->num_rows > 0){
                                 echo'
-                                <button class="btn btn-success btn-lg btn-block" onClick="captureimage(0,2)"><ion-icon name="camera-outline"></ion-icon>Absen Pulang</button>';
+                                <button class="btn btn-success btn-lg btn-block btn-action-absent" onClick="captureimage(0,2)"><ion-icon name="camera-outline"></ion-icon>Absen Pulang</button>';
                             }else{
                                 echo'
-                                <button class="btn btn-success btn-lg btn-block" onClick="captureimage(0,1)"><ion-icon name="camera-outline"></ion-icon>Absen Masuk</button>
-                                <button class="btn btn-success btn-lg btn-block" onClick="captureimage(0,2)"><ion-icon name="camera-outline"></ion-icon>Absen Pulang</button>';
+                                <button class="btn btn-success btn-lg btn-block btn-action-absent" onClick="captureimage(0,1)"><ion-icon name="camera-outline"></ion-icon>Absen Masuk</button>
+                                <button class="btn btn-success btn-lg btn-block btn-action-absent" onClick="captureimage(0,2)"><ion-icon name="camera-outline"></ion-icon>Absen Pulang</button>';
                             }
                         echo'
                         </div>';

@@ -20,7 +20,7 @@ CREATE TABLE `building` (
 ) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4;
 
 INSERT INTO building VALUES("5","SW4I8/2021","SMK Negeri ","SMK","","","");
-INSERT INTO building VALUES("6","SWP09/2021","SMK N 1 Kaliwungu","Jalan Raya Ampel – Simo KM. 8, Kaliwungu, Canggal, Jetis, Semarang, Jawa Tengah 50778","","-7.463889","110.615290");
+INSERT INTO building VALUES("6","SWP09/2021","SMK N 1 Kaliwungu","Jalan Raya Ampel Â– Simo KM. 8, Kaliwungu, Canggal, Jetis, Semarang, Jawa Tengah 50778","","-7.463889","110.615290");
 
 
 
@@ -68,7 +68,7 @@ CREATE TABLE `employees` (
   `photo` varchar(100) NOT NULL,
   `created_login` datetime NOT NULL,
   `created_cookies` varchar(70) NOT NULL,
-  `flag_login` tinyint(4) DEFAULT NULL,
+  `flag_login` INT(11) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=123 DEFAULT CHARSET=utf8mb4;
 
