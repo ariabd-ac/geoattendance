@@ -101,9 +101,7 @@ function backup($conn, $database_name)
         // Save the SQL script to a backup file
         $backup_file_name = $database_name . '_backup_' . time() . '.sql';
         $fileHandler = fopen($backup_file_name, 'w+');
-        var_dump($fileHandler);
-        var_dump(error_get_last());
-        die();
+        
         $number_of_lines = fwrite($fileHandler, $sqlScript);
         fclose($fileHandler);
         // Download the SQL backup file to the browser
