@@ -55,8 +55,7 @@ function backup($conn, $database_name)
         $tables[] = $row[0];
         
     }
-    echo 'table == >';
-    var_dump($tables);
+   
     $sqlScript = "";
     $sqlScript .= "\n\n USE " . $database_name . ";\n\n";
 
@@ -94,16 +93,15 @@ function backup($conn, $database_name)
         $sqlScript .= "\n";
     }
 
-    echo "Script == >";
-    echo $sqlScript;
-
-    die;
+   
+   
 
     if (!empty($sqlScript)) {
 
         // Save the SQL script to a backup file
         $backup_file_name = $database_name . '_backup_' . time() . '.sql';
         $fileHandler = fopen($backup_file_name, 'w+');
+        die($fileHandler);
         $number_of_lines = fwrite($fileHandler, $sqlScript);
         fclose($fileHandler);
         // Download the SQL backup file to the browser
