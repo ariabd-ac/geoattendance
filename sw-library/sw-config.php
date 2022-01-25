@@ -2,15 +2,15 @@
 date_default_timezone_set('Asia/Jakarta');
 $pacth_url	= 'http://' . $_SERVER["HTTP_HOST"] . $_SERVER["REQUEST_URI"] . '';
 // -------------- Koneksi Database ------------
-// $DB_HOST 	= 'localhost';
-// $DB_USER 	= 'root'; // User Database
-// $DB_PASSWD  = ''; // Password Database
-// $DB_NAME 	= 'absensi_v3.1'; // Nama database
-
 $DB_HOST 	= 'localhost';
 $DB_USER 	= 'root'; // User Database
 $DB_PASSWD  = ''; // Password Database
-$DB_NAME 	= 'absensi_v3'; // Nama database
+$DB_NAME 	= 'absensi_v3.1'; // Nama database
+
+// $DB_HOST 	= 'localhost';
+// $DB_USER 	= 'root'; // User Database
+// $DB_PASSWD  = ''; // Password Database
+// $DB_NAME 	= 'absensi_v3'; // Nama database
 
 // vps
 // $DB_HOST 	= 'localhost';
