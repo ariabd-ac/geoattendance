@@ -102,6 +102,7 @@ function backup($conn, $database_name)
         $backup_file_name = $database_name . '_backup_' . time() . '.sql';
         $fileHandler = fopen($backup_file_name, 'w+');
         var_dump($fileHandler);
+        var_dump(error_get_last());
         die();
         $number_of_lines = fwrite($fileHandler, $sqlScript);
         fclose($fileHandler);
