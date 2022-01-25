@@ -1,9 +1,12 @@
+<script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script>
 <?php
 if (empty($connection)) {
     header('location:../../');
 } else {
     include_once 'sw-mod/sw-panel.php';
     require_once '../sw-library/phpqrcode/qrlib.php';
+
     echo '
   <div class="content-wrapper">';
     switch (@$_GET['op']) {
@@ -36,8 +39,18 @@ if (empty($connection)) {
                     </div>
                 </div>
             </section>';
+
+            if (isset($_SESSION['flash'])) {
+
+                echo "  <script>
+                        $(document).ready(function() {
+                            swal('" . $_SESSION['flash']['message'] . "','','" . $_SESSION['flash']['type'] . "');
+                        });
+                        </script>";
+                unset($_SESSION['flash']);
+            }
             break;
     } ?>
-
     </div>
+
 <?php } ?>
